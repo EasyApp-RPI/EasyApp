@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyApp Options</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+
+        .btn, input, textarea, select {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h4 class="text-center mb-4">EasyApp Options</h4>
+        
+        <form>
+            <input type="text" class="form-control" placeholder="Your Name" id="name">
+            <input type="text" class="form-control" placeholder="Your Major" id="major">
+            <textarea class="form-control" placeholder="Your Interests" id="interests"></textarea>
+            <textarea type="text" class="form-control" placeholder="Supplementary Text" id="other-questions"></textarea>
+
+            <label for="resume" class="mt-3">Upload Resume:</label>
+            <input type="file" class="form-control-file" id="resume">
+
+            <label for="cover-letter" class="mt-3">Upload Cover Letter:</label>
+            <input type="file" class="form-control-file" id="cover-letter">
+
+            <label for="cv" class="mt-3">Upload CV:</label>
+            <input type="file" class="form-control-file" id="cv">
+
+            <button type="submit" class="btn btn-primary mt-4">Save Options</button>
+        </form>
+    </div>
+</body>
+
+</html>
