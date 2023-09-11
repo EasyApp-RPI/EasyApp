@@ -3,7 +3,8 @@ const path = require("path");
 module.exports = {
   entry: {
     popup: "./src/popup/index.tsx",
-    options: "./src/options/index.tsx"
+    options: "./src/options/index.tsx",
+    autofill: "../autofill/autofillScript.ts"
   },
   mode: "production",
   module: {
@@ -26,7 +27,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js"],
   },
   output: {
-    filename: "react-[name].js",
+    filename: "[name].js",
     path: path.resolve(__dirname, "..", "extension"),
   },
 };

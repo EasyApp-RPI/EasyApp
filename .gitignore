@@ -1,4 +1,5 @@
 .DS_Store
 
-react-options.js*
-react-popup.js*
+extension/*
+!extension/icons
+!extension/manifest.json
