@@ -11,7 +11,7 @@ function EasyAppOptions() {
 
     return (
         <Container>
-            <h4 className="text-center mb-4">EasyApp Options</h4>
+            <h2 className="text-center mb-4">EasyApp Options</h2>
             
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group>
