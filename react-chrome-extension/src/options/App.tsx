@@ -1,3 +1,5 @@
+// This app is the settings page where users can enter their info, and tweak general options about the extension
+
 import React from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
