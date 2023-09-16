@@ -26,8 +26,7 @@ jobs:
       id: cache-nodemodules
       uses: actions/cache@v3
       with:
-        # Path may be messed up but we'll see
-        path: node_modules
+        path: react-chrome-extension/node_modules
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
     - name: Installing Dependencies
