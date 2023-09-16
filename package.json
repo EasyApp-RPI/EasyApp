@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "cd react-chrome-extension && npx webpack"
+  }
+}
