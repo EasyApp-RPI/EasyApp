@@ -22,7 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
-    - name: Cache node modules
+    - name: Cache React Chrome Extension node modules
       uses: actions/cache@v3
       with:
         path: react-chrome-extension/node_modules
@@ -30,7 +30,9 @@ jobs:
 
     - name: Installing Dependencies
       if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-      run: npm install
+      run: |
+          cd react-chrome-extension
+          npm install
 
     - name: Build
       run: |
