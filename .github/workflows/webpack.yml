@@ -33,8 +33,9 @@ jobs:
       if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true'}} 
       run: |
           cd react-chrome-extension
-          npm install
+          npm ci
 
     - name: Build
       run: |
+        cd react-chrome-extension
         npm run build
