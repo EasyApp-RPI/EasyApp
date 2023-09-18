@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 18.x, latest]
+        node-version: [14.x, 18.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -21,29 +21,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    
-#    - name: Cache React Chrome Extension node modules
-#      id: cache-nodemodules
-#      uses: actions/cache@v3
-#      with:
-#        path: react-chrome-extension/node_modules
-#        key: ${{ runner.os }}-${{ hashFiles('**/react-chrome-extension/package-lock.json') }}
-
-    - name: Testing Cache
-      id: testing-cache
-      uses: actions/cache@v3
-      with:
-        path: test.txt
-        key: "testKey"
-
-
-    - name: Installing Dependencies
-      if: ${{ steps.testing-cache.outputs.cache-hit != 'true'}} 
-      run: |
-          cd react-chrome-extension
-          npm install
 
     - name: Build
       run: |
         cd react-chrome-extension
-        npm run build
+        npm install
+        npx run build
