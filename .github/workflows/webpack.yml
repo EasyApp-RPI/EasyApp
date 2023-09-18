@@ -22,15 +22,23 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
-    - name: Cache React Chrome Extension node modules
-      id: cache-nodemodules
+#    - name: Cache React Chrome Extension node modules
+#      id: cache-nodemodules
+#      uses: actions/cache@v3
+#      with:
+#        path: react-chrome-extension/node_modules
+#        key: ${{ runner.os }}-${{ hashFiles('**/react-chrome-extension/package-lock.json') }}
+
+    - name: Testing Cache
+      id: testing-cache
       uses: actions/cache@v3
       with:
-        path: react-chrome-extension/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/react-chrome-extension/package-lock.json') }}
+        path: test.txt
+        key: "testKey"
+
 
     - name: Installing Dependencies
-      if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true'}} 
+      if: ${{ steps.testing-cache.outputs.cache-hit != 'true'}} 
       run: |
           cd react-chrome-extension
           npm install
