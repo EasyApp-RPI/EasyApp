@@ -7,15 +7,14 @@ extension/*
 
 # Node
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+react-chrome-extension/node_modules
+react-chrome-extension/.pnp
 
 # testing
-/coverage
+react-chrome-extension/coverage
 
 # production
-/build
+react-chrome-extension/build
 
 # misc
 .DS_Store
