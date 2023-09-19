@@ -24,6 +24,5 @@ jobs:
 
     - name: Build
       run: |
-        cd react-chrome-extension
         npm install
         npx webpack

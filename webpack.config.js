@@ -2,9 +2,9 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    popup: "./src/popup/index.tsx",
-    options: "./src/options/index.tsx",
-    autofill: "../autofill/autofillScript.ts"
+    popup: "./react-chrome-extension/src/popup/index.tsx",
+    options: "./react-chrome-extension/src/options/index.tsx",
+    autofill: "./autofill/autofillScript.ts"
   },
   mode: "production",
   module: {
@@ -28,6 +28,6 @@ module.exports = {
   },
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, "..", "extension"),
+    path: path.resolve(__dirname, "extension"),
   },
 };

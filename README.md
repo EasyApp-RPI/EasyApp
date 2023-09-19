@@ -8,11 +8,14 @@ Welcome to **EasyApp**, your one-stop solution for navigating job listings with 
 
 ## Table of Contents
 
-- [Features](#features)
-- [Getting Started](#getting-started)
-  - [Installation](#installation)
-- [Dive into Chrome Extensions](#dive-into-chrome-extensions)
-- [License](#license)
+- [EasyApp Chrome Extension 🚀](#easyapp-chrome-extension-)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [For Devs](#for-devs)
+  - [Dive into Chrome Extensions](#dive-into-chrome-extensions)
+  - [License](#license)
 
 ## Features
 
@@ -25,13 +28,31 @@ Welcome to **EasyApp**, your one-stop solution for navigating job listings with 
 ### Installation
 
 1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/easyapp-extension.git
-   ```
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Enable "Developer mode" (usually a toggle in the top right).
-4. Click on "Load unpacked" and select the directory where you cloned the repository.
-5. The **EasyApp** extension icon should now appear in your Chrome toolbar. Click on it and enjoy!
+
+```bash
+git clone https://github.com/yourusername/easyapp-extension.git
+```
+
+2. Open the repository on your machine and install node packages with:
+
+```bash
+npm install
+```
+
+3. Then build the chrome extension with:
+
+```bash
+npm run build
+```
+
+4. Open Chrome and navigate to `chrome://extensions/`.
+5. Enable "Developer mode" (usually a toggle in the top right).
+6. Click on "Load unpacked" and select the `EasyApp/extension` directory.
+7. The **EasyApp** extension icon should now appear in your Chrome toolbar. Click on it and enjoy!
+
+### For Devs
+
+If you alter the react chrome extension or autofill script at all make sure to run `npm run build`. If you alter the extension permissions in the manifest make sure to reload the extension.
 
 ## Dive into Chrome Extensions
 

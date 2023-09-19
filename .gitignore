@@ -1,5 +1,28 @@
 .DS_Store
 
+# Chrome Extension
 extension/*
 !extension/icons
 !extension/manifest.json
+
+# Node
+# dependencies
+react-chrome-extension/node_modules
+react-chrome-extension/.pnp
+
+# testing
+react-chrome-extension/coverage
+
+# production
+react-chrome-extension/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

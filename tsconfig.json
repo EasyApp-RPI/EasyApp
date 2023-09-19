@@ -21,6 +21,7 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src"
+    "./react-chrome-extension/src",
+    "./autofill"
   ]
 }
