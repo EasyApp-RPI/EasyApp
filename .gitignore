@@ -7,13 +7,15 @@ extension/*
 
 # Node
 # dependencies
-react-chrome-extension/node_modules
-react-chrome-extension/.pnp
+node_modules
+.pnp
 
 # testing
+coverage
 react-chrome-extension/coverage
 
 # production
+build
 react-chrome-extension/build
 
 # misc
