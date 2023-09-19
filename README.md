@@ -30,10 +30,10 @@ Welcome to **EasyApp**, your one-stop solution for navigating job listings with 
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/easyapp-extension.git
+git clone https://github.com/EasyApp-RPI/EasyApp.git
 ```
 
-2. Open the repository on your machine and install node packages with:
+2. Open the repository on your machine nd install node packages with:
 
 ```bash
 npm install
