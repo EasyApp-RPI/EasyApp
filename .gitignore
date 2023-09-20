@@ -7,8 +7,8 @@ extension/*
 
 # Node
 # dependencies
-react-chrome-extension/node_modules
-react-chrome-extension/.pnp
+node_modules
+.pnp
 
 # testing
 react-chrome-extension/coverage
