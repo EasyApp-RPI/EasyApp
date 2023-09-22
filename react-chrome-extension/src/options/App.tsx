@@ -1,9 +1,40 @@
 // This app is the settings page where users can enter their info, and tweak general options about the extension
 
 import React from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { useForm } from 'react-hook-form';
+import {Container, Form, Button, Dropdown, DropdownButton, ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
+import {useForm} from 'react-hook-form';
+import {useEffect, useState} from 'react';
 
+
+function LoadingButton() {
+    const [isLoading, setLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        function simulateNetworkRequest() {
+            return new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        if (isLoading) {
+            simulateNetworkRequest().then(() => {
+                setLoading(false);
+            });
+        }
+    }, [isLoading]);
+
+    const handleClick = () => setLoading(true);
+
+    return (
+        <button
+            className="btn btn-primary"
+            disabled={isLoading}
+            onClick={!isLoading ? handleClick : undefined}
+        >
+            {isLoading ? 'Loading…' : 'Submit'}
+        </button>
+    );
+}
+
+  
 function EasyAppOptions() {
   const { register, handleSubmit } = useForm();
 
