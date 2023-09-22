@@ -1,8 +1,8 @@
 // This app is the settings page where users can enter their info, and tweak general options about the extension
 
 import React from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { useForm } from 'react-hook-form';
+import { Container, Form, Button, Dropdown } from 'react-bootstrap';
+import { useForm} from 'react-hook-form';
 
 function EasyAppOptions() {
     const { register, handleSubmit } = useForm();
@@ -27,7 +27,50 @@ function EasyAppOptions() {
                 <Form.Group>
                     <Form.Control as="textarea" placeholder="Your Interests" {...register('interests')} />
                 </Form.Group>
+                
+                <Form.Group>
+                    <Form.Control as="textarea" placeholder="Skills" {...register('skills')} />
+                </Form.Group>
+                
+                <Form.Group>
+                    <Form.Control as="textarea" placeholder="Past Jobs/Experiences" {...register('jobs')} />
+                </Form.Group>
 
+                <Form.Group>
+                    <Form.Label>Gender:</Form.Label>
+                    <Form.Check type="radio" label="Male" value="male" {...register('Gender')} />
+                    <Form.Check type="radio" label="Female" value="female" {...register('Gender')} />
+                    <Form.Check type="radio" label="Other" value="other" {...register('Gender')} />
+                </Form.Group>
+
+                
+                <Form.Group>
+                    <Form.Label>Disabled Status:</Form.Label>
+                    <Form.Check type="radio" label="Yes" value="yes" {...register('disabledStatus')} />
+                    <Form.Check type="radio" label="No" value="no" {...register('disabledStatus')} />
+                    <Form.Check type="radio" label="No Answer" value="no answer" {...register('disabledStatus')} />
+                </Form.Group>
+
+                
+                <Form.Group>
+                    <Form.Label>Veteran Status:</Form.Label>
+                    <Form.Check type="radio" label="Yes" value="yes" {...register('veteranStatus')} />
+                    <Form.Check type="radio" label="No" value="no" {...register('veteranStatus')} />
+                    <Form.Check type="radio" label="No Answer" value="no answer" {...register('veteranStatus')} />
+                </Form.Group>
+                
+                <Form.Group>
+                    <Form.Label>Ethnicity:</Form.Label>
+                    <Form.Check type="radio" label="White" value="white" {...register('ethnicity')} />
+                    <Form.Check type="radio" label="Black" value="black" {...register('ethnicity')} />
+                    <Form.Check type="radio" label="Asian" value="asian" {...register('ethnicity')} />
+                    <Form.Check type="radio" label="Arab" value="arab" {...register('ethnicity')} />
+                    <Form.Check type="radio" label="Hispanic/Latino" value="hispanic-latino" {...register('ethnicity')} />
+                    <Form.Check type="radio" label="Mixed or Multiple ethnic groups" value="multiple" {...register('ethnicity')} />
+                    <Form.Check type="radio" label="No Answer" value="no answer" {...register('ethnicity')} />
+                </Form.Group>
+
+                
                 <Form.Group>
                     <Form.Control as="textarea" placeholder="Supplementary Text" {...register('otherQuestions')} />
                 </Form.Group>
