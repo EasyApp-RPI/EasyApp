@@ -1,10 +1,11 @@
-import { AIMessage, ChatMessage, HumanMessage, SystemMessage } from "langchain/schema";
+import { AIMessage, BaseMessage, ChatMessage, HumanMessage, SystemMessage } from "langchain/schema";
 import { chatModel } from "./llm";
 const user = {
-  name: "samir s beall",
+  name: "samir sam beall",
   email: "samir.beall@gmail.com",
   address: "1999 Burdett Ave, Troy, NY 12180",
   phone_number: "(123) 456-78910",
+  zip: "12180"
 };
 
 async function main (){
@@ -21,6 +22,12 @@ async function main (){
   messages.push(new HumanMessage({content: "First Name"}));
   messages.push(new AIMessage({content: "Samir"}));
 
+  messages.push(new HumanMessage({content: "Address"}));
+  messages.push(new AIMessage({content: "1999 Burdette Ave"}));
+  //
+  messages.push(new HumanMessage({content: "Middle Name"}));
+  messages.push(new AIMessage({content: "Sam"}));
+
   const inputFields = document.querySelectorAll('input');
   const questionsAndFields: { question: string, field: HTMLInputElement }[] = [];
 
@@ -36,19 +43,23 @@ async function main (){
 
   console.log(questionsAndFields);
 
+  messages.push(new HumanMessage({content: "placeholder"}))
+
   for (const qf of questionsAndFields){
 
     console.log("querying chat")
-    messages.push(new HumanMessage({content: qf.question}))
+    messages[7] = new HumanMessage({content: qf.question});
 
-    let chatModelResult = await chatModel.predictMessages(messages);
-    messages.push(chatModelResult);
+    let chatModelResult = chatModel.predictMessages(messages);
 
-    console.log("chat result: ")
-    console.log(chatModelResult);
-    
+    chatModelResult.then((resolvedResponse: BaseMessage) => {
+      console.log("chat result: ")
+      console.log(chatModelResult);
 
-    qf.field.value = chatModelResult.content;
+      qf.field.value = resolvedResponse.content;
+    })
+    // messages.push(chatModelResult);
+
   }
 
   console.log(messages);
