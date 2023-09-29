@@ -106,6 +106,9 @@ function labelDict(labels: Element[], fields: Element[], map: Map<Element, Eleme
     }
 }
 
+let labelMap = new Map<Element, Element | undefined>();
+labelDict(Array.from(document.querySelectorAll('label')), Array.from(document.querySelectorAll('input')), labelMap);
+
 const user = {
   name: "samir sam beall",
   email: "samir.beall@gmail.com",
@@ -117,10 +120,8 @@ const user = {
 
 async function main (){
 
-    let labelMap = new Map<Element, Element | undefined>();
-    labelDict(Array.from(document.querySelectorAll('label')), Array.from(document.querySelectorAll('input')), labelMap);
-
-  let template_text = "I will give you an input field and you choose which response best fits the fields label. The data you will select form exclusively comes from: ";
+  let template_text = "I will give you an input field and you choose which response best fits the response} \
+  the data you will use is:";
 
   template_text += JSON.stringify(user)
 
@@ -155,8 +156,18 @@ async function main (){
   messages.push(new HumanMessage({content: "placeholder"}))
 
 
+  for (let [key, value] of labelMap){
+    messages.push(new HumanMessage({content: value?.textContent || ''}));
+    let chatModelResult = chatModel.predictMessages(messages);
 
-  for (const qf of questionsAndFields){
+    chatModelResult.then((resolvedResponse: BaseMessage) => {
+        console.log("chat result: ")
+        console.log(chatModelResult);
+        if(key) (key as HTMLInputElement).value = resolvedResponse.content;
+    })
+}
+
+  /*for (const qf of questionsAndFields){
 
     console.log("querying chat")
     messages[7] = new HumanMessage({content: qf.question});
@@ -171,7 +182,7 @@ async function main (){
     })
     // messages.push(chatModelResult);
 
-  }
+  }*/
 
   console.log(messages);
 }
