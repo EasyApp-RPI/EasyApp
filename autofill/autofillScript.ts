@@ -32,8 +32,11 @@ const agreeToTerms = document.querySelector('input[name*="agree"]');
 if (agreeToTerms) (agreeToTerms as HTMLInputElement).checked = true;
 
 // Dropdown test. Sets to Albania on "https://www.globalsqa.com/demo-site/select-dropdown-menu/" proof of concept for dropdowns
-const dropdown = document.querySelector('select');;
-if (dropdown) (dropdown as HTMLSelectElement).value = "ALB";
+const stateField = document.getElementById("address-level1") as HTMLSelectElement;
+stateField.value = "AL";
+
+const countryField = document.getElementById("country") as HTMLSelectElement;
+countryField.value = "US";
 
 
 
