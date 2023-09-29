@@ -5,14 +5,14 @@ extension/*
 !extension/icons
 !extension/manifest.json
 
-# Node
-# dependencies
+# Node dependencies
 node_modules
 .pnp
 
 # testing
 coverage
 react-chrome-extension/coverage
+test.pdf
 
 # production
 build
