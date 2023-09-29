@@ -46,9 +46,9 @@ function EasyAppOptions() {
                     <Form.Label>Disability Status (Optional)</Form.Label>
                     <Form.Control as="select" {...register('language')}>
                         <option value="">--Select--</option>
-                        <option value="yes_disabled">Java</option>
-                        <option value="no_disabled">C#</option>
-                        <option value="unanswered_disabled">Ruby</option>
+                        <option value="yes_disabled">Yes, I have a disability, or have had one in the past </option>
+                        <option value="no_disabled">No, I do not have a disability and have not had one in the past</option>
+                        <option value="unanswered_disabled">I do not want to answer</option>
                     </Form.Control>
                 </Form.Group>
 
