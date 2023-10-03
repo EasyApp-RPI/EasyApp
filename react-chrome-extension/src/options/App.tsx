@@ -7,41 +7,31 @@ import {useEffect, useState} from 'react';
 import {ChangeEvent} from 'react';
 
 
-function LoadingButton() {
-    const [isLoading, setLoading] = React.useState(false);
 
-    React.useEffect(() => {
-        function simulateNetworkRequest() {
-            return new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-
-        if (isLoading) {
-            simulateNetworkRequest().then(() => {
-                setLoading(false);
-            });
-        }
-    }, [isLoading]);
-
-    const handleClick = () => setLoading(true);
-
-    return (
-        <button
-            className="btn btn-primary"
-            disabled={isLoading}
-            onClick={!isLoading ? handleClick : undefined}
-        >
-            {isLoading ? 'Loading…' : 'Submit'}
-        </button>
-    );
-}
 
   
 function EasyAppOptions() {
-  const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
+ 
+    const {register, handleSubmit} = useForm();
+    const [formData, setFormData] = useState({
+      });
+    const [storedValues, setStoredValues] = useState('');
+
+    useEffect(() => {
+        chrome.storage.local.get(null, (result) => {
+            console.log("All stored data:", result);
+            console.log(result.key.name);
+            setStoredValues(result.key.name);
+          });
+    },[]);
+    const onSubmit = (data: any) => {
+        chrome.storage.local.set({ key: data }).then(() => {
+            console.log("Value is set");
+            console.log(data);
+          });
+    };
+
 
     // Limit the size of the file uploaded
     const [errorMessage, setErrorMessage] = useState('');
