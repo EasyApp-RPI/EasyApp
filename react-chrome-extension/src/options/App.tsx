@@ -79,7 +79,7 @@ function EasyAppOptions() {
 
                 <Form.Group>
                     <Form.Label>Upload Resume:</Form.Label>
-                    <Form.Control type="file" {...register('resume')} />
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" {...register('resume')} />
                 </Form.Group>
 
                 <Form.Group>
