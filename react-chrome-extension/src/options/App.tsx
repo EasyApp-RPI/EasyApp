@@ -4,6 +4,7 @@ import React from 'react';
 import {Container, Form, Button, Dropdown, DropdownButton, ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
 import {useForm} from 'react-hook-form';
 import {useEffect, useState} from 'react';
+import {ChangeEvent} from 'react';
 
 
 function LoadingButton() {
@@ -40,6 +41,28 @@ function EasyAppOptions() {
 
     const onSubmit = (data: any) => {
         console.log(data);
+    };
+
+    // Limit the size of the file uploaded
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files && event.target.files[0];
+
+        if (selectedFile) {
+            // Adjust the maximum file size (in bytes) as needed
+            const maxSize = 1024 * 1024 * 10; // 10 MB
+
+            if (selectedFile.size > maxSize) {
+                setErrorMessage('File size exceeds the limit (10MB)');
+                event.target.value = ''; // Clear the file input
+                alert("File size exceeds the limit (10MB)");
+
+            } else {
+                // File size is within the limit
+                setErrorMessage('');
+            }
+        }
     };
 
     return (
@@ -79,7 +102,7 @@ function EasyAppOptions() {
 
                 <Form.Group>
                     <Form.Label>Upload Resume:</Form.Label>
-                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" {...register('resume')} />
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" {...register('resume')} onChange={handleFileChange}/>
                 </Form.Group>
 
                 <Form.Group>
