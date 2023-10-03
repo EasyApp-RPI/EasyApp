@@ -4,6 +4,7 @@ import React from 'react';
 import {Container, Form, Button, Dropdown, DropdownButton, ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
 import {useForm} from 'react-hook-form';
 import {useEffect, useState} from 'react';
+import {ChangeEvent} from 'react';
 
 
 function LoadingButton() {
@@ -42,9 +43,31 @@ function EasyAppOptions() {
     console.log(data);
   };
 
-  return (
-    <Container>
-      <h2 className='text-center mb-4'>EasyApp Options</h2>
+    // Limit the size of the file uploaded
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files && event.target.files[0];
+
+        if (selectedFile) {
+            // Adjust the maximum file size (in bytes) as needed
+            const maxSize = 1024 * 1024 * 10; // 10 MB
+
+            if (selectedFile.size > maxSize) {
+                setErrorMessage('File size exceeds the limit (10MB)');
+                event.target.value = ''; // Clear the file input
+                alert("File size exceeds the limit (10MB)");
+
+            } else {
+                // File size is within the limit
+                setErrorMessage('');
+            }
+        }
+    };
+
+    return (
+        <Container>
+            <h2 className="text-center mb-4">EasyApp Options</h2>
 
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group>
