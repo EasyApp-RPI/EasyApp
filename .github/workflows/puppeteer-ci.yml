@@ -10,23 +10,11 @@ jobs:
   test:
     name: Test Puppeteer
     runs-on: ubuntu-latest
+
     steps:
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Test action
-        uses: ./
+      - uses: actions/checkout@v3
+      - name: Run test
+        uses: tj-actions/puppeteer@v4
         id: puppeteer-test
         with:
-          files: tests/autofill-tests.js
-
-      - name: Copy test output
-        uses: tj-actions/docker-cp@v2
-        with:
-          container: ${{ steps.puppeteer-test.outputs.container-id }}
-          source: ${{ steps.puppeteer-test.outputs.home }}/test.pdf
-          destination: test.pdf
-
-      - name: Display contents of test.pdf
-        run: cat test.pdf
+          files: tests/autofill-tests.mjs
