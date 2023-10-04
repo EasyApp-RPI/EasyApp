@@ -29,21 +29,21 @@ Welcome to **EasyApp**, your one-stop solution for navigating job listings with 
 
 1. Clone this repository:
 
-```bash
-git clone https://github.com/EasyApp-RPI/EasyApp.git
-```
+      ```bash
+      git clone https://github.com/EasyApp-RPI/EasyApp.git
+      ```
 
 2. Open the repository on your machine nd install node packages with:
 
-```bash
-npm install
-```
+      ```bash
+      npm install
+      ```
 
 3. Then build the chrome extension with:
 
-```bash
-npm run build
-```
+      ```bash
+      npm run build
+      ```
 
 4. Open Chrome and navigate to `chrome://extensions/`.
 5. Enable "Developer mode" (usually a toggle in the top right).
