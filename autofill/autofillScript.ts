@@ -65,67 +65,155 @@ export {}
 
 import { AIMessage, BaseMessage, ChatMessage, HumanMessage, SystemMessage } from "langchain/schema";
 import { chatModel } from "./llm";
-
-
-
-// Very basic function to find closest label to input field. Used for testing below
 function labelDist(labels: Element[], input: Element): Element {
     let minDist = Number.MAX_VALUE;
     let minLabel = labels[0];
-    for (let i = 0; i < labels.length; i++) {
-        let dist = Math.abs(labels[i].getBoundingClientRect().top - input.getBoundingClientRect().top);
+    for (let i of labels) {
+        let dist = Math.abs(i.getBoundingClientRect().top - input.getBoundingClientRect().top);
         if (dist < minDist) {
             minDist = dist;
-            minLabel = labels[i];
+            minLabel = i;
         }
     }
     return minLabel;
 }
 
-function fieldDist(fields: Element[], input: Element): Element {
+function inputDist(inputs: Element[], label: Element): Element {
     let minDist = Number.MAX_VALUE;
-    let minField = fields[0];
-    for (let i = 0; i < fields.length; i++) {
-        let dist = Math.abs(fields[i].getBoundingClientRect().top - input.getBoundingClientRect().top);
+    let minInput = inputs[0];
+    for (let i of inputs) {
+        let dist = Math.abs(i.getBoundingClientRect().top - label.getBoundingClientRect().top);
         if (dist < minDist) {
             minDist = dist;
-            minField = fields[i];
+            minInput = i;
         }
     }
-    return minField;
+    return minInput;
 }
 
-function labelDict(labels: Element[], fields: Element[], map: Map<Element, Element | undefined>){
-    let emptyElement = document.createElement("input");
-    for (let i = 0; i < fields.length; i++){
-        let label = labelDist(labels, fields[i]);
-        if(fields[i] == fieldDist(fields, label)){
-            map.set(fields[i], label);
+
+function labelDict(labels: Element[], fields: Element[], map: Map<Element, Element | undefined>, set: Set<Element>){
+    for (let i of fields){
+        let label = labelDist(labels, i);
+        if(!set.has(label) && i == inputDist(fields, label)) {
+            map.set(i, label);
+            set.add(label);
+            console.log("new label found " + label.textContent);
         }
         else{
-            map.set(fields[i], map.get(fields[i-1] || emptyElement));
+            let newLabel = label.cloneNode(true);
+            newLabel.textContent = label.textContent + " 2";
+            console.log("duplicate label found " + newLabel.textContent);
         }
     }
 }
 
 let labelMap = new Map<Element, Element | undefined>();
-labelDict(Array.from(document.querySelectorAll('label')), Array.from(document.querySelectorAll('input')), labelMap);
+// remove dupe labels
+
+let labels = Array.from(document.querySelectorAll('label'));
+
+let labelSet = new Set<Element>();
+labelDict(labels, Array.from(document.querySelectorAll('input')), labelMap, labelSet);
 
 const user = {
-  name: "samir sam beall",
-  email: "samir.beall@gmail.com",
+  name: "Ariel Ricardo Montero",
+  email: "ariel.montmaj@gmail.com",
   address: "1999 Burdett Ave, Troy, NY 12180",
   phone_number: "(123) 456-78910",
   zip: "12180",
-  none: "none"
+  none: "",
+  resume: ` Ariel Montero
+  (845) 413-6766 | montea8@rpi.edu | linkedin.com/in/ariel-montero | github.com/timelord1102
+  
+   Education
+  Rensselaer Polytechnic Institute		            Troy, NY
+  Bachelor of Science in Computer Science (ABET-Accredited) 	     Aug. 2021– May 2025
+  Relevant Coursework: Data Structures, Foundations of Computer Science, Principles of Software, Introduction to Algorithms
+  
+  Experience
+  Developer - EasyApp                                                                                                                Aug. 2023 – Present
+  Rensselaer Center for Open Source 		               Troy, NY
+  Reduce job application time to mere minutes, providing an increase in speed of nearly 1000% over non-AI assisted capabilities on average
+  Spearhead development of an AI powered text generative backend designed to automatically adapt to and fill out various online job applications
+  Develop a connected frontend in the form of a Google Chrome and Firefox extension for easy of use 
+  
+  Sales Associate	 May 2023 – Present
+  Follett Corporation			Troy, NY
+  Lead projects dedicated to improving store efficiency and appearance
+  Balance various tasks with greeting and assisting over 100 customers daily
+  Adapt skills to non-normal work environments such as events and after hours projects
+  
+  Cashier and Maintenance Tech                                                                                      Jan. 2023 – Mar. 2023
+  Sodexo	               Troy, NY
+  Balanced customer assistance with maintenance of dining hall standards
+  Guaranteed smooth operation of all sections of the eatery
+  Showed mastery of cashier software by debugging issues with the underlying Windows 7 systems
+  
+  Projects
+  SteamScrape | Python, JSON, Steam API, Git	     May 2023 – Present
+  Developed a script to scrape a list of over 90,000 games and DLC on Steam
+  Combined Steam’s API and web scraping to gather information regardless of API availability
+  Used JSON files to store data and keep track of scanned games for easy data updates with no user intervention
+  
+  RPIt | Jellyfin, Ubuntu Server, Docker, Tdarr                                                                                               Aug. 2022  – Present
+  Created a media server with nearly 12 terabytes of video files sourced from a large Blu-ray collection
+  Implemented using a heavily customized Jellyfin software installed as a Docker image for easy maintenance
+  Utilized Tdarr to fully automate the transcoding of media for standardization of encodings to x264
+  
+  Technical Skills
+  Programming Languages: Python, Java, C/C++, Typescript
+  Developer Tools: Git, GitHub, Docker, VS Code, Visual Studio, Eclipse, WSL, Powershell, LangChain
+  Languages: English, Spanish
+  `
 };
 
 async function main (){
 
-  let template_text = "I will give you an input field and you choose which response best fits the response} \
-  the data you will use is:";
-
-  template_text += JSON.stringify(user)
+  let template_text = "Use the following resume to pull data from and fill out a form:" 
+  template_text += `Ariel Montero
+  (845) 413-6766 | montea8@rpi.edu | linkedin.com/in/ariel-montero | github.com/timelord1102
+  
+   Education
+  Rensselaer Polytechnic Institute		            Troy, NY
+  Bachelor of Science in Computer Science (ABET-Accredited) 	     Aug. 2021– May 2025
+  Relevant Coursework: Data Structures, Foundations of Computer Science, Principles of Software, Introduction to Algorithms
+  
+  Experience
+  Developer - EasyApp                                                                                                                Aug. 2023 – Present
+  Rensselaer Center for Open Source 		               Troy, NY
+  Reduce job application time to mere minutes, providing an increase in speed of nearly 1000% over non-AI assisted capabilities on average
+  Spearhead development of an AI powered text generative backend designed to automatically adapt to and fill out various online job applications
+  Develop a connected frontend in the form of a Google Chrome and Firefox extension for easy of use 
+  
+  Sales Associate	 May 2023 – Present
+  Follett Corporation			Troy, NY
+  Lead projects dedicated to improving store efficiency and appearance
+  Balance various tasks with greeting and assisting over 100 customers daily
+  Adapt skills to non-normal work environments such as events and after hours projects
+  
+  Cashier and Maintenance Tech                                                                                      Jan. 2023 – Mar. 2023
+  Sodexo	               Troy, NY
+  Balanced customer assistance with maintenance of dining hall standards
+  Guaranteed smooth operation of all sections of the eatery
+  Showed mastery of cashier software by debugging issues with the underlying Windows 7 systems
+  
+  Projects
+  SteamScrape | Python, JSON, Steam API, Git	     May 2023 – Present
+  Developed a script to scrape a list of over 90,000 games and DLC on Steam
+  Combined Steam’s API and web scraping to gather information regardless of API availability
+  Used JSON files to store data and keep track of scanned games for easy data updates with no user intervention
+  
+  RPIt | Jellyfin, Ubuntu Server, Docker, Tdarr                                                                                               Aug. 2022  – Present
+  Created a media server with nearly 12 terabytes of video files sourced from a large Blu-ray collection
+  Implemented using a heavily customized Jellyfin software installed as a Docker image for easy maintenance
+  Utilized Tdarr to fully automate the transcoding of media for standardization of encodings to x264
+  
+  Technical Skills
+  Programming Languages: Python, Java, C/C++, Typescript
+  Developer Tools: Git, GitHub, Docker, VS Code, Visual Studio, Eclipse, WSL, Powershell, LangChain
+  Languages: English, Spanish
+  `
 
   console.log(template_text);
 
@@ -140,25 +228,23 @@ async function main (){
   messages.push(new HumanMessage({content: "Middle Name"}));
   messages.push(new AIMessage({content: "Sam"}));
 
+    messages.push(new HumanMessage({content: "City"}));
+    messages.push(new AIMessage({content: "Troy"}));
+
+    messages.push(new HumanMessage({content: "City 2"}));
+    messages.push(new AIMessage({content: ""}));
+
+    messages.push(new HumanMessage({content: "School"}));
+    messages.push(new AIMessage({content: "Rensselear Polytechnic Institute"}));
+
+
+
   const inputFields = document.querySelectorAll('input');
   const questionsAndFields: { question: string, field: HTMLInputElement }[] = [];
 
-  inputFields.forEach((inputField: HTMLInputElement) => {
-    const label = document.querySelector(`label[for="${inputField.id}"]`);
-    if (label) {
-      questionsAndFields.push({
-        question: label.textContent || '',
-        field: inputField
-      });
-    }
-  });
+  let inputs = Array.from(inputFields);
+  for (let [key, value] of labelMap) {
 
-  console.log(questionsAndFields);
-
-  messages.push(new HumanMessage({content: "placeholder"}))
-
-
-  for (let [key, value] of labelMap){
     messages.push(new HumanMessage({content: value?.textContent || ''}));
     let chatModelResult = chatModel.predictMessages(messages);
 
