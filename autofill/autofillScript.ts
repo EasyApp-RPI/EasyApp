@@ -145,6 +145,44 @@ function populateDropdown(data: any[]) {
     });
 }*/
 
+//FUNCTION FOR UPLOADING A PDF
+function uploadPDF() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const uploadForm = document.getElementById('uploadForm') as HTMLFormElement;
+        const pdfInput = document.getElementById('pdfInput') as HTMLInputElement;
+        const messageDiv = document.getElementById('message');
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            if (pdfInput.files!=null) {
+                formData.append('pdfFile', pdfInput.files[0]);
+            }
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (messageDiv!=null) {
+                    if (response.ok) {
+                        messageDiv.innerText = 'PDF uploaded successfully!';
+                    } else {
+                        messageDiv.innerText = 'Failed to upload PDF.';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                if (messageDiv!=null) {
+                    messageDiv.innerText = 'An error occurred while uploading the PDF.';
+                }
+            }
+        });
+    });
+}
+
+// main.ts
 async function main (){
 
   let template_text = "I will give you an input field and you choose which response best fits the response} \
