@@ -122,7 +122,6 @@ const user = {
   address: "1999 Burdett Ave, Troy, NY 12180",
   phone_number: "(123) 456-78910",
   zip: "12180",
-  none: "",
   resume: ` Ariel Montero
   (845) 413-6766 | montea8@rpi.edu | linkedin.com/in/ariel-montero | github.com/timelord1102
   
@@ -165,8 +164,33 @@ const user = {
   Programming Languages: Python, Java, C/C++, Typescript
   Developer Tools: Git, GitHub, Docker, VS Code, Visual Studio, Eclipse, WSL, Powershell, LangChain
   Languages: English, Spanish
-  `
+  `,
+  major: "Computer Science", 
+  none: "none"
 };
+
+// Dropdown test. Sets to Albania on "https://www.globalsqa.com/demo-site/select-dropdown-menu/" proof of concept for dropdowns
+//const stateField = document.getElementById("degree") as HTMLSelectElement;
+//stateField.value = "Bachelor's Degree";
+
+/*Possible methods for dropdown?
+const dropdownData = [
+    { id: 1, name: "Option 1" },
+    { id: 2, name: "Option 2" },
+    { id: 3, name: "Option 3" }
+];
+
+const dropdown = document.getElementById("dropdown") as HTMLSelectElement;
+
+// Function to populate the dropdown
+function populateDropdown(data: any[]) {
+    data.forEach(item => {
+        const option = document.createElement("option");
+        option.value = JSON.stringify(item); // Convert the object to a JSON string
+        option.text = item.name; // Set the display text
+        dropdown.appendChild(option);
+    });
+}*/
 
 async function main (){
 
