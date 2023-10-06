@@ -8,25 +8,47 @@ import {ChangeEvent} from 'react';
 
 
 
-
   
 function EasyAppOptions() {
 
  
     const {register, handleSubmit} = useForm();
-    const [formData, setFormData] = useState({
-      });
-    const [storedValues, setStoredValues] = useState('');
+    const [formData, setFormData] = useState({});
+    const [storedName, setStoredName] = useState("");
+    const [storedMajor, setStoredMajor] = useState("");
+    const [storedInterests, setStoredInterests] = useState("");
+    const [storedSkills, setStoredSkills] = useState("");
+    const [storedJobs, setStoredJobs] = useState("");
+    const [storedLinks, setStoredLinks] = useState("");
+    const [storedQuestions, setStoredQuestions] = useState("");
+
+
+
+
 
     useEffect(() => {
         chrome.storage.local.get(null, (result) => {
-            console.log("All stored data:", result);
-            console.log(result.key.name);
-            setStoredValues(result.key.name);
-          });
-    },[]);
+          console.log("All stored data:", result);
+          
+          const storedName = result.key.name || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredName(storedName);
+          const storedMajor = result.key.major || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredMajor(storedMajor);
+          const storedInterests = result.key.interests || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredInterests(storedInterests);
+          const storedSkills = result.key.skills || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredSkills(storedSkills);
+          const storedJobs = result.key.jobs || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredJobs(storedJobs);
+          const storedLinks = result.key.links || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredLinks(storedLinks);
+          const storedQuestions = result.key.otherQuestions || ""; // Replace 'key.name' with the actual key you want to retrieve
+          setStoredQuestions(storedQuestions);
+        });
+      }, []);
     const onSubmit = (data: any) => {
-        chrome.storage.local.set({ key: data }).then(() => {
+        
+        chrome.storage.local.set({ key: data}).then(() => {
             console.log("Value is set");
             console.log(data);
           });
@@ -61,32 +83,31 @@ function EasyAppOptions() {
 
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group>
-                    <Form.Control type="text" placeholder="Your Name" value={storedValues} {...register('name')} />
+                    <Form.Control type="text" placeholder="Your Name" value={storedName} {...register('name')} onChange={(e) => setStoredName(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control type="text" placeholder="Your Major" {...register('major')} />
+                    <Form.Control type="text" placeholder="Your Major" value={storedMajor}  {...register('major')} onChange={(e) => setStoredMajor(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control as="textarea" placeholder="Your Interests" {...register('interests')} />
+                    <Form.Control as="textarea" placeholder="Your Interests" value={storedInterests} {...register('interests')}onChange={(e) => setStoredInterests(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control as="textarea" placeholder="Skills" {...register('skills')}/>
+                    <Form.Control as="textarea" placeholder="Skills"value={storedSkills} {...register('skills')} onChange={(e) => setStoredSkills(e.target.value)}/>
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control as="textarea" placeholder="Past Jobs/Experiences" {...register('jobs')} />
+                    <Form.Control as="textarea" placeholder="Past Jobs/Experiences"value={storedJobs} {...register('jobs')} onChange={(e) => setStoredJobs(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control as="textarea"
-                                  placeholder="LinkedIn/Github/Personal Websites" {...register('links')} />
+                    <Form.Control as="textarea" placeholder="LinkedIn/Github/Personal Websites"value={storedLinks} {...register('links')} onChange={(e) => setStoredLinks(e.target.value)} />
                 </Form.Group>
 
                 <Form.Group>
-                    <Form.Control as="textarea" placeholder="Supplementary Text" {...register('otherQuestions')} />
+                    <Form.Control as="textarea" placeholder="Supplementary Text"value={storedQuestions} {...register('otherQuestions')} onChange={(e) => setStoredQuestions(e.target.value)}/>
                 </Form.Group>
 
 
