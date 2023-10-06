@@ -16,11 +16,14 @@ function EasyAppOptions() {
     const {register, handleSubmit} = useForm();
     const [formData, setFormData] = useState({
       });
+    const [storedValues, setStoredValues] = useState('');
 
     useEffect(() => {
         chrome.storage.local.get(null, (result) => {
             console.log("All stored data:", result);
-          });    
+            console.log(result.key.name);
+            setStoredValues(result.key.name);
+          });
     },[]);
     const onSubmit = (data: any) => {
         chrome.storage.local.set({ key: data }).then(() => {
@@ -28,6 +31,8 @@ function EasyAppOptions() {
             console.log(data);
           });
     };
+
+
     // Limit the size of the file uploaded
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -56,7 +61,7 @@ function EasyAppOptions() {
 
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group>
-                    <Form.Control type="text" placeholder="Your Name" {...register('name')} />
+                    <Form.Control type="text" placeholder="Your Name" value={storedValues} {...register('name')} />
                 </Form.Group>
 
                 <Form.Group>
