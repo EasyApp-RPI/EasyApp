@@ -14,6 +14,7 @@
     "dotenv-webpack": "^8.0.1",
     "exponential-backoff": "^3.1.1",
     "fs": "^0.0.1-security",
+    "jquery": "^3.7.1",
     "langchain": "^0.0.154",
     "langchain-gpt4all": "^0.0.74",
     "react": "^18.2.0",
