@@ -12,6 +12,14 @@ const user = {
     null: "other"
 };
 
+function cleanUp(input: string): string{
+    while (input[0] != ':'){
+        input = input.slice(1);
+    }
+    input = input.slice(1);
+    return input;
+}
+
 function normalFields(){
     
     let template = 'From the following data, pick a single best response for the field: \n' + JSON.stringify(user)
@@ -20,12 +28,16 @@ function normalFields(){
     
     let messages = [new SystemMessage({ content: template })];
     
-    messages.push(new HumanMessage({content: "First Name"}));
+    messages.push(new HumanMessage({content: "Field text: Name, Field ID: name, Field name: name"}));
     messages.push(new AIMessage({content: "Samir"}));
-    messages.push(new HumanMessage({content: "Street Address"}));
+    messages.push(new HumanMessage({content: "Field text: Street Address, Field ID: street_address, Field name: street_address"}));
     messages.push(new AIMessage({content: "1999 Burdette Ave"}));
-    messages.push(new HumanMessage({content: "Middle Name"}));
-    messages.push(new AIMessage({content: "Sam"}));
+    messages.push(new HumanMessage({content: "Field text: Confirm Address, Field ID: confirm_address, Field name: confirm_address"}));
+    messages.push(new AIMessage({content: "1999 Burdette Ave"}));
+    messages.push(new HumanMessage({content: "Field text: Email, Field ID: email, Field name: email"}));
+    messages.push(new AIMessage({content: "samir.beall@gmail.com"}));
+    messages.push(new HumanMessage({content: "Field text: Confirm Address, Field ID: confirm_email, Field name: confirm_email"}));
+    messages.push(new AIMessage({content: "samir.beall@gmail.com"}));
     
     let divs = document.querySelectorAll('div');
     
@@ -40,20 +52,21 @@ function normalFields(){
         if(label.length == 1 && input.length == 1){
            // if (input[0]) (input[0] as HTMLInputElement).value = label[0].textContent;
             // give ai the label
-            let label_text = label[0].textContent;
-            console.log("label: " + label_text);
-            messages[7] = (new HumanMessage({content: label_text}));
+            let label_text = "Field Text: " + label[0].textContent + ", Field ID: " + input[0].id + ", Field Name: " + input[0].name;
+            messages[11] = (new HumanMessage({content: label_text}));
             // get ai response
             let response = chatModel.predictMessages(messages);
             // set input value to response
             response.then((res: BaseMessage) => {
                 if (res instanceof AIMessage){
-                    console.log("\tAI response: " + res.content);
-                    if (input[0]) (input[0] as HTMLInputElement).value = res.content;
+                    console.log("label: " + label_text + " input: " + cleanUp(res.content));
+                    if (input[0]) (input[0] as HTMLInputElement).value = cleanUp(res.content).trim();
                 }
             })
         }
     }
+    console.log(JSON.stringify(messages));
+
 }
 
 function dropdownFields(){
@@ -71,16 +84,14 @@ function dropdownFields(){
 
     // get dropdowns from page using jquery
     let dropdowns = $('select');
-    console.log("dropdowns: " + dropdowns.length);
-    // for each dropdown get the options as an array
+    // for each dropdown get the option value field as an array
     for (let i of dropdowns){
         let options = $(i).find('option');
-        console.log("options: " + options.length);
 
         let dropdownOptions = [];
         for (let j of options){
             let option = j as HTMLOptionElement;
-            dropdownOptions.push(option.text);
+            dropdownOptions.push(option.value);
         }
         // give ai the dropdown options
         messages[3] = (new HumanMessage({content: JSON.stringify(dropdownOptions)}));
@@ -89,14 +100,13 @@ function dropdownFields(){
         // set dropdown value to response
         response.then((res: BaseMessage) => {
             if (res instanceof AIMessage){
-                console.log("AI response: " + res.content);
-                if (i) (i as HTMLSelectElement).value = res.content.trim();
+                if (i) (i as HTMLSelectElement).value = cleanUp(res.content).trim();
             }
         })
     }
 }
 
 normalFields();
-//dropdownFields();
+dropdownFields();
 
 export {}
