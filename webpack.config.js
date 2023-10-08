@@ -1,5 +1,5 @@
 const path = require("path");
-
+const Dotenv = require("dotenv-webpack");
 module.exports = {
   entry: {
     popup: "./react-chrome-extension/src/popup/index.tsx",
@@ -30,4 +30,7 @@ module.exports = {
     filename: "[name].js",
     path: path.resolve(__dirname, "extension"),
   },
+  plugins: [
+    new Dotenv(),
+  ],
 };
