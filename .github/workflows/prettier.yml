@@ -10,12 +10,14 @@ jobs:
   prettier:
     runs-on: ubuntu-latest
 
+    # Checkouts Main or PR branch
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
+      # Commits any possible prettier formatting changes
       - name: Prettify code
         uses: creyD/prettier_action@v4.3
         with:

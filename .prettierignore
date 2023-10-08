@@ -1,11 +1,11 @@
 # Prettier Format Ignoring
 
+.github/
+.prettierrc.json
+README.md
 extension
 node_modules
-README.md
-tsconfig.json
-webpack.config.js
-.prettierrc.json
 package-lock.json
 package.json
-.github/
+tsconfig.json
+webpack.config.js
