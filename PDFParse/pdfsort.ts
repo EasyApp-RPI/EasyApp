@@ -11,8 +11,8 @@ function isName(line: string, isFirstNonEmptyLine: boolean): string | null {
   return isFirstNonEmptyLine && trimmedLine.length > 0 ? trimmedLine : null;
 }
 
-function parseResume(txtPath: string): ParsedInfo[] {
-  const lines = fs.readFileSync(txtPath, 'utf-8').split('\n');
+function parseResume(jsonPath: string): ParsedInfo[] {
+  const lines = fs.readFileSync(jsonPath, 'utf-8').split('\n');
 
   const parsedInfo: ParsedInfo[] = [];
   let currentCategory: string | null = null;
@@ -55,8 +55,8 @@ function parseResume(txtPath: string): ParsedInfo[] {
 }
 
 // Example usage:
-const txtPath = path.join(__dirname, 'output.txt'); // Update with your actual file path
-const parsedInfo = parseResume(txtPath);
+const jsonPath = path.join(__dirname, 'output.json'); // Update with your actual file path
+const parsedInfo = parseResume(jsonPath);
 
 console.log('Parsed Information:');
 console.log(parsedInfo);

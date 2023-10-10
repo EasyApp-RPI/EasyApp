@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as pdf from 'pdf-parse';
 import * as readlineSync from 'readline-sync';
 
-async function convertPdfToTxt(): Promise<void> {
+async function convertPdfToJson(): Promise<void> {
   try {
     // Get PDF file path from user input
     const pdfPath = readlineSync.question('Enter the path to the PDF file: ');
@@ -24,16 +24,16 @@ async function convertPdfToTxt(): Promise<void> {
     const textContent = data.text;
 
     // Create output file path
-    const txtPath = path.join(__dirname, 'output.txt');
+    const jsonPath = path.join(__dirname, 'output.json');
 
-    // Write text content to a TXT file
-    fs.writeFileSync(txtPath, textContent);
+    // Write text content to a JSON file
+    fs.writeFileSync(jsonPath, textContent);
 
-    console.log('Conversion successful! Text saved to output.txt');
+    console.log('Conversion successful! Text saved to output.json');
   } catch (error) {
-    console.error('Error converting PDF to TXT:', error.message);
+    console.error('Error converting PDF to JSON:', error.message);
   }
 }
 
 // Call the function to start the conversion
-convertPdfToTxt();
+convertPdfToJson();

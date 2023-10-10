@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+        while (_) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -35,14 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var fs = require("fs");
 var path = require("path");
 var pdf = require("pdf-parse");
 var readlineSync = require("readline-sync");
-function convertPdfToTxt() {
+function convertPdfToJson() {
     return __awaiter(this, void 0, void 0, function () {
-        var pdfPath, dataBuffer, data, textContent, txtPath, error_1;
+        var pdfPath, dataBuffer, data, textContent, jsonPath, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -58,14 +58,14 @@ function convertPdfToTxt() {
                 case 1:
                     data = _a.sent();
                     textContent = data.text;
-                    txtPath = path.join(__dirname, 'output.txt');
-                    // Write text content to a TXT file
-                    fs.writeFileSync(txtPath, textContent);
-                    console.log('Conversion successful! Text saved to output.txt');
+                    jsonPath = path.join(__dirname, 'output.json');
+                    // Write text content to a JSON file
+                    fs.writeFileSync(jsonPath, textContent);
+                    console.log('Conversion successful! Text saved to output.json');
                     return [3 /*break*/, 3];
                 case 2:
                     error_1 = _a.sent();
-                    console.error('Error converting PDF to TXT:', error_1.message);
+                    console.error('Error converting PDF to JSON:', error_1.message);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
@@ -73,4 +73,4 @@ function convertPdfToTxt() {
     });
 }
 // Call the function to start the conversion
-convertPdfToTxt();
+convertPdfToJson();
