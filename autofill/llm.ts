@@ -57,4 +57,3 @@ export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo) => {
 
   return result
 }
-

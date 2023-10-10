@@ -11,7 +11,10 @@
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
     "bootstrap": "^5.3.2",
+<<<<<<< HEAD
     "langchain": "^0.0.153",
+=======
+>>>>>>> 193b2c9 (further modified the autofill algorithm. Now MUCH more efficient runtime)
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-dom": "^18.2.0",
