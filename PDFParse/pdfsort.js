@@ -45,5 +45,9 @@ function parseResume(jsonPath) {
 // Example usage:
 var jsonPath = path.join(__dirname, 'output.json'); // Update with your actual file path
 var parsedInfo = parseResume(jsonPath);
+// Write the parsed information to a JSON file
+var outputJsonPath = path.join(__dirname, 'parsed_output.json');
+fs.writeFileSync(outputJsonPath, JSON.stringify(parsedInfo, null, 2));
 console.log('Parsed Information:');
 console.log(parsedInfo);
+console.log("Parsed information has been written to ".concat(outputJsonPath));
