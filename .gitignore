@@ -30,7 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # PDF Parse
-parsePdf.js
 PDFParse/*
 !PDFParse/pdfparse.ts
 !PDFParse/pdfsort.ts
+!PDFParse/pdfparse.js
+!PDFParse/pdfsort.js
