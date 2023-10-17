@@ -42,7 +42,7 @@ input text:
 export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo) => {
   const chain = new LLMChain({ llm: model, prompt });
 
-  let result = chain.call({
+  let result = await chain.call({
     userInfo: JSON.stringify(userInfo),
     firstName: userInfo.firstName,
     phoneNumber: userInfo.phoneNumber,
@@ -52,8 +52,9 @@ export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo) => {
     placeholder: fieldInfo.placeholder,
   });
 
+  return result.text as string;
 
-  result = result.then((value) => (value.res.text));
+  // result = result.then((value) => (value.text));
 
-  return result
+  // return result
 }

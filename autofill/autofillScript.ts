@@ -9,10 +9,11 @@ import $ from "jquery";
 import { FieldInfo, UserInfo } from "./types";
 
 const user: UserInfo = {
-  name: "ariel ricardo montero majthenyi",
+  firstName: "Samir",
+  lastName: "Beall",
   email: "montea8@rpi.edu",
   address: "1999 Burdett Ave, Troy, NY 12180",
-  phone_number: "(123) 456-78910",
+  phoneNumber: "(123) 456-78910",
   zip: "12180",
   null: "other",
 };
@@ -95,9 +96,9 @@ async function normalFields() {
       };
       // get ai response
       let response = await answerField(user, fieldInfo);
-      console.log("result: " + response.textContent);
+      console.log("result: " + response);
 
-      if (input[0]) (input[0] as HTMLInputElement).value = cleanUp(response.text).trim();
+      if (input[0]) (input[0] as HTMLInputElement).value = response;
     }
   }
 }
