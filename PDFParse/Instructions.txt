@@ -1,0 +1,15 @@
+INSTRUCTIONS
+
+1) Compile using tsc to turn the ts files into js
+
+2) Once compiled, run the program starting with:
+
+node pdfparse.js
+
+and write the path to your file
+
+3) It will produce a json ,which will then be taken by pdf sort using
+
+node pdfsort.js
+
+4) You should end up with a final json that can be used however you see fit
