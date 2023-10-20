@@ -5,7 +5,7 @@ export interface UserInfo {
 }
 
 export interface FieldInfo {
-  inputLabel: string | null,
+  inputLabel: string,
   name: string,
   id: string,
   placeholder: string,

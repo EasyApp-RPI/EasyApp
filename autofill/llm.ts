@@ -11,7 +11,7 @@ export const model = new OpenAI(
   });
 
 
-const prompt= PromptTemplate.fromTemplate(`
+const normPrompt = PromptTemplate.fromTemplate(`
 {userInfo}
 
 Given this user information, respond to the input field label and name
@@ -38,23 +38,51 @@ placeholder: {placeholder}
 input text:
 `);
 
+const dropdownPrompt = PromptTemplate.fromTemplate(`
+{userInfo}
 
-export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo) => {
-  const chain = new LLMChain({ llm: model, prompt });
+Given this user information, respond to the drop down field with the best out of the given options
 
-  let result = await chain.call({
-    userInfo: JSON.stringify(userInfo),
-    firstName: userInfo.firstName,
-    phoneNumber: userInfo.phoneNumber,
-    inputLabel: fieldInfo.inputLabel,
-    name: fieldInfo.name,
-    id: fieldInfo.id,
-    placeholder: fieldInfo.placeholder,
-  });
+dropDownOptions: 
+male
+female
+other
 
-  return result.text as string;
+input text: male
 
-  // result = result.then((value) => (value.text));
+dropDownOptions: {dropDown}
 
-  // return result
+input text:
+`);
+
+
+export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, dropDown: string[] = []) => {
+  if (dropDown.length > 0) {
+
+    const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
+    let result = await chain.call({
+      userInfo: JSON.stringify(userInfo),
+      dropDown: dropDown.join("\n")
+    });
+    console.log(result.text);
+    return result.text as string;
+
+  } else {
+
+    const chain = new LLMChain({ llm: model, prompt: normPrompt });
+    let result = await chain.call({
+      userInfo: JSON.stringify(userInfo),
+      firstName: userInfo.firstName,
+      phoneNumber: userInfo.phoneNumber,
+      inputLabel: fieldInfo.inputLabel,
+      name: fieldInfo.name,
+      id: fieldInfo.id,
+      placeholder: fieldInfo.placeholder,
+    });
+
+    return result.text as string;
+
+  }
+
+  
 }
