@@ -1,74 +1,114 @@
 // This app is the settings page where users can enter their info, and tweak general options about the extension
 
 import React from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { useForm } from 'react-hook-form';
-
+import {Container, Form, Button} from 'react-bootstrap';
+import {useEffect, useState} from 'react';
+  
 function EasyAppOptions() {
-  const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
+    // Sets initial state of form fields
+    const [FormData, setFormData] = useState([
+        {key:"name", value:'', label:"Name", type:"input"},
+        {key:"major", value:'', label:"Major", type:"input"},
+        {key:"interests", value:'', label:"Interests", type:"textarea"},
+        {key:"skills", value:'', label:"Skills", type:"textarea"},
+        {key:"experience", value:'', label:"Experience", type:"textarea"},
+        {key:"links", value:'', label:"Links", type:"textarea"},
+        {key:"supplement", value:'', label:"SupplementaryText", type:"textarea"},
+    ]);
 
-  return (
-    <Container>
-      <h2 className='text-center mb-4'>EasyApp Options</h2>
+    // On page load/refresh it loads local storage data into the value of the form field.
+    useEffect(() => {
+        handleFormDataLoad();
+        handleFileChange;
+    },[])
 
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Group>
-          <Form.Control
-            type='text'
-            placeholder='Your Name'
-            {...register('name')}
-          />
-        </Form.Group>
+    // Loads data from local storage into the stateful FormData variable
+    const handleFormDataLoad = () => {
+        FormData.map((data, index) => {
+            const value : any  = localStorage.getItem(data.key);
+            if(value !== null){
+                data.value = value;
+                handleFormDataChange(index, data.value);
+            }
+        })
+    }
 
-        <Form.Group>
-          <Form.Control
-            type='text'
-            placeholder='Your Major'
-            {...register('major')}
-          />
-        </Form.Group>
+    // Updates FormData on change to any form field
+    const handleFormDataChange = (index : number, str : string) => {
+        const updatedData = [...FormData];
+        updatedData[index].value = str;
+        setFormData(updatedData);
+    }
+    // Stores current FormData in the local storage
+    const handleSubmit = () => {
+        FormData.map((data: {key:string, value:string}) => {
+            localStorage.setItem(data.key, data.value.trim())
+        });
+        handleFormDataLoad;
+        console.log(FormData);
+    }
 
-        <Form.Group>
-          <Form.Control
-            as='textarea'
-            placeholder='Your Interests'
-            {...register('interests')}
-          />
-        </Form.Group>
+    // Limit the size of the file uploaded
+    const [errorMessage, setErrorMessage] = useState('');
 
-        <Form.Group>
-          <Form.Control
-            as='textarea'
-            placeholder='Supplementary Text'
-            {...register('otherQuestions')}
-          />
-        </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Upload Resume:</Form.Label>
-          <Form.Control type='file' {...register('resume')} />
-        </Form.Group>
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files && event.target.files[0];
 
-        <Form.Group>
-          <Form.Label>Upload Cover Letter:</Form.Label>
-          <Form.Control type='file' {...register('coverLetter')} />
-        </Form.Group>
+        if (selectedFile) {
+            // Adjust the maximum file size (in bytes) as needed
+            const maxSize = 1024 * 1024 * 10; // 10 MB
 
-        <Form.Group>
-          <Form.Label>Upload CV:</Form.Label>
-          <Form.Control type='file' {...register('cv')} />
-        </Form.Group>
+            if (selectedFile.size > maxSize) {
+                setErrorMessage('File size exceeds the limit (10MB)');
+                event.target.value = ''; // Clear the file input
+                alert("File size exceeds the limit (10MB)");
 
-        <Button type='submit' className='mt-4'>
-          Save Options
-        </Button>
-      </Form>
-    </Container>
-  );
+            } else {
+                // File size is within the limit
+                setErrorMessage('');
+            }
+        }
+    };
+
+
+    return (
+        <Container>
+            <h2 className="text-center mb-4">EasyApp Options</h2>
+
+            <Form>
+
+                {FormData.map((data, index) => (
+                    <Form.Group key={index}>
+                        <Form.Control
+                            as = {(index<2)?"input":"textarea"}
+                            placeholder = {data.key}
+                            defaultValue = {data.value}
+                            value = {data.value}
+                            onChange = {(event) => handleFormDataChange(index, event.target.value)}/>
+                    </Form.Group>
+                ))}
+
+                <Form.Group>
+                    <Form.Label>Upload Resume:</Form.Label>
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="Resume" onChange={handleFileChange}/>
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.Label>Upload Cover Letter:</Form.Label>
+                    <Form.Control type="file" name="Cover Letter" />
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.Label>Upload CV:</Form.Label>
+                    <Form.Control type="file" name="CV" />
+                </Form.Group>
+
+                 <Button onClick={handleSubmit} >Submit</Button>{' '}
+            </Form>
+        </Container>
+    );
 }
 
 export default EasyAppOptions;
