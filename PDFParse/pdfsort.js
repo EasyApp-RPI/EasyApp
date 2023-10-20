@@ -51,3 +51,4 @@ fs.writeFileSync(outputJsonPath, JSON.stringify(parsedInfo, null, 2));
 console.log('Parsed Information:');
 console.log(parsedInfo);
 console.log("Parsed information has been written to ".concat(outputJsonPath));
+console.log("Parsed information has been written to ".concat(outputJsonPath));

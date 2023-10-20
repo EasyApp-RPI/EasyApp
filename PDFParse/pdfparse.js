@@ -58,7 +58,7 @@ function convertPdfToJson() {
                 case 1:
                     data = _a.sent();
                     textContent_1 = data.text;
-                    keywords = ['experience', 'skills', 'education', 'projects', 'achievements', 'workexperience'];
+                    keywords = ['experience', 'skills', 'education', 'projects', 'achievements'];
                     // Highlight keywords in uppercase
                     keywords.forEach(function (keyword) {
                         var regex = new RegExp("\\b".concat(keyword, "\\b"), 'gi'); // Using RegExp for whole word matching
