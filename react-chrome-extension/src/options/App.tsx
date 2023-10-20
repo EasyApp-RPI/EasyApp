@@ -24,29 +24,34 @@ function EasyAppOptions() {
     },[])
 
     // Loads data from local storage into the stateful FormData variable
-    const handleFormDataLoad = () => {
-        FormData.map((data, index) => {
-            const value : any  = localStorage.getItem(data.key);
-            if(value !== null){
-                data.value = value;
-                handleFormDataChange(index, data.value);
-            }
-        })
-    }
+  const handleFormDataLoad = () => {
+          FormData.forEach((data, index) => {
+              chrome.storage.sync.get([data.key], function(result) {
+                  if (result[data.key] !== undefined) {
+                      data.value = result[data.key];
+                      handleFormDataChange(index, data.value);
+                  }
+              });
+          });
+      }
 
     // Updates FormData on change to any form field
-    const handleFormDataChange = (index : number, str : string) => {
+const handleFormDataChange = (index: any, str: any) => {
         const updatedData = [...FormData];
         updatedData[index].value = str;
         setFormData(updatedData);
     }
-    // Stores current FormData in the local storage
+
     const handleSubmit = () => {
-        FormData.map((data: {key:string, value:string}) => {
-            localStorage.setItem(data.key, data.value.trim())
+        let dataToSave: { [key: string]: string } = {};
+        FormData.forEach((data) => {
+            dataToSave[data.key] = data.value.trim();
         });
-        handleFormDataLoad;
-        console.log(FormData);
+
+        chrome.storage.sync.set(dataToSave, function() {
+            console.log('Data saved to chrome.storage.sync.');
+            handleFormDataLoad();
+        });
     }
 
     // Limit the size of the file uploaded
