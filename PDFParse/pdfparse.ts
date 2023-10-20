@@ -24,7 +24,7 @@ async function convertPdfToJson(): Promise<void> {
     let textContent = data.text;
 
     // Array of important keywords
-    const keywords = ['experience', 'skills', 'education', 'projects', 'achievements'];
+    const keywords = ['experience', 'skills', 'education', 'projects', 'achievements','workexperience'];
 
     // Highlight keywords in uppercase
     keywords.forEach(keyword => {
