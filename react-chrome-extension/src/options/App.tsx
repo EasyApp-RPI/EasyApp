@@ -3,7 +3,9 @@
 import React from 'react';
 import {Container, Form, Button} from 'react-bootstrap';
 import {useEffect, useState} from 'react';
-  
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 function EasyAppOptions() {
 
     // Sets initial state of form fields
@@ -49,6 +51,15 @@ function EasyAppOptions() {
         console.log(FormData);
     }
 
+
+    const handleClear = () => {
+        FormData.map((data: {key:string, value:string}) => {
+            localStorage.setItem(data.key, '')
+        });
+        location.reload();
+        handleFormDataLoad;
+    }
+
     // Limit the size of the file uploaded
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -73,7 +84,17 @@ function EasyAppOptions() {
     };
 
 
+
     return (
+        <>
+            <style type="text/css">
+                {`
+                .bgColor{
+                    background-color: red; 
+                    color: white;
+                    }
+                `}
+            </style>
         <Container>
             <h2 className="text-center mb-4">EasyApp Options</h2>
 
@@ -104,10 +125,21 @@ function EasyAppOptions() {
                     <Form.Label>Upload CV:</Form.Label>
                     <Form.Control type="file" name="CV" />
                 </Form.Group>
+                <Container>
+                    <Row>
+                        <Col>
+                            <Button onClick={handleSubmit} >Submit</Button>{' '}
+                        </Col>
+                        <Col>
+                            <Button style={{backgroundColor: '#FF0000'}} onClick={handleClear} >Clear</Button>{' '}
+                        </Col>
+                    </Row>
+                </Container>
 
-                 <Button onClick={handleSubmit} >Submit</Button>{' '}
             </Form>
         </Container>
+        </>
+
     );
 }
 
