@@ -21,12 +21,21 @@ async function convertPdfToJson(): Promise<void> {
     const data = await pdf(dataBuffer);
 
     // Extract text content
-    const textContent = data.text;
+    let textContent = data.text;
+
+    // Array of important keywords
+    const keywords = ['experience', 'skills', 'education', 'projects', 'achievements'];
+
+    // Highlight keywords in uppercase
+    keywords.forEach(keyword => {
+      const regex = new RegExp(`\\b${keyword}\\b`, 'gi'); // Using RegExp for whole word matching
+      textContent = textContent.replace(regex, match => match.toUpperCase());
+    });
 
     // Create output file path
     const jsonPath = path.join(__dirname, 'output.json');
 
-    // Write text content to a JSON file
+    // Write modified text content to a JSON file
     fs.writeFileSync(jsonPath, textContent);
 
     console.log('Conversion successful! Text saved to output.json');

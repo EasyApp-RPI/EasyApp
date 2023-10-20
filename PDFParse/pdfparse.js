@@ -42,7 +42,7 @@ var pdf = require("pdf-parse");
 var readlineSync = require("readline-sync");
 function convertPdfToJson() {
     return __awaiter(this, void 0, void 0, function () {
-        var pdfPath, dataBuffer, data, textContent, jsonPath, error_1;
+        var pdfPath, dataBuffer, data, textContent_1, keywords, jsonPath, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -57,10 +57,16 @@ function convertPdfToJson() {
                     return [4 /*yield*/, pdf(dataBuffer)];
                 case 1:
                     data = _a.sent();
-                    textContent = data.text;
+                    textContent_1 = data.text;
+                    keywords = ['experience', 'skills', 'education', 'projects', 'achievements'];
+                    // Highlight keywords in uppercase
+                    keywords.forEach(function (keyword) {
+                        var regex = new RegExp("\\b".concat(keyword, "\\b"), 'gi'); // Using RegExp for whole word matching
+                        textContent_1 = textContent_1.replace(regex, function (match) { return match.toUpperCase(); });
+                    });
                     jsonPath = path.join(__dirname, 'output.json');
-                    // Write text content to a JSON file
-                    fs.writeFileSync(jsonPath, textContent);
+                    // Write modified text content to a JSON file
+                    fs.writeFileSync(jsonPath, textContent_1);
                     console.log('Conversion successful! Text saved to output.json');
                     return [3 /*break*/, 3];
                 case 2:
