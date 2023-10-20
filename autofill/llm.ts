@@ -1,6 +1,6 @@
 import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
-import { UserInfo, FieldInfo} from "./types";
+import { UserInfo, FieldInfo, FilePaths} from "./types";
 import { LLMChain } from "langchain/chains";
 
 export const model = new OpenAI(
@@ -55,8 +55,26 @@ dropDownOptions: {dropDown}
 input text:
 `);
 
+const filePrompt = PromptTemplate.fromTemplate(`
+{filePaths}
+which file should be uploaded based on the field info?
 
-export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, dropDown: string[] = []) => {
+input label: resume
+name: 
+id: resume
+
+input text:
+{resumePath}
+
+input label: {inputLabel}
+name: {name}
+id: {id}
+
+input text:
+`);
+
+
+export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, dropDown: string[] = [] ) => {
   if (dropDown.length > 0) {
 
     const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
@@ -85,4 +103,17 @@ export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, drop
   }
 
   
+}
+
+// Speacial case for file inputs. The AI will return the file path of the file to upload
+export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => {
+  const chain = new LLMChain({ llm: model, prompt: filePrompt });
+  let result = await chain.call({
+    filePaths: JSON.stringify(filePaths),
+    inputLabel: fieldInfo.inputLabel,
+    name: fieldInfo.name,
+    id: fieldInfo.id,
+    resumePath: filePaths.resumePath,
+  });
+ return result.text as string;
 }

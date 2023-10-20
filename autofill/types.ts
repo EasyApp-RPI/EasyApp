@@ -11,4 +11,9 @@ export interface FieldInfo {
   placeholder: string,
 }
 
+export interface FilePaths {
+  resumePath: string,
+  transcriptPath: string,
+  coverLetterPath: string,
+}
 

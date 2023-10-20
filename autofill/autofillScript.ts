@@ -1,5 +1,5 @@
-import { answerField } from "./llm";
-import { FieldInfo, UserInfo } from "./types";
+import { answerField, answerFile } from "./llm";
+import { FieldInfo, UserInfo, FilePaths } from "./types";
 
 const user: UserInfo = {
   firstName: "Samir",
@@ -10,6 +10,11 @@ const user: UserInfo = {
   zip: "12180",
   null: "other",
 };
+const files: FilePaths = {
+  resumePath: "C:\\Users\\lordo\\Downloads\\Ariels Resume-1.pdf",
+  transcriptPath: "C:\\Users\\lordo\\Downloads\\Academic Transcript.pdf",
+  coverLetterPath: "null",
+}
 
 // A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
 function cleanUp(input: string): string {
@@ -27,9 +32,9 @@ async function normalFields() {
   // get all divs
   let divs = document.querySelectorAll("div");
 
-  // for each div, get labels and inputs contained by the div. This is done useing jquery
+  // for each div, get labels and inputs contained by the div
   for (let i of divs) {
-    // get all divs with one label and one input using jquery
+    // get all divs with one label and one input
     let label = i.querySelectorAll("label");
     let input = i.querySelectorAll("input");
     if (label.length == 1 && input.length == 1) {
@@ -41,6 +46,27 @@ async function normalFields() {
         id: input[0].id || "",
         placeholder: input[0].placeholder || "",
       };
+
+      // if the input is a file input, use the answerFile function
+      if(input[0].type == "file") {
+
+        // get AI response for file path
+        let file = await answerFile(files, fieldInfo);
+        console.log("result (file): " + file);
+        // if there is no file to upload, continue to next field
+        if (file == "null") continue;
+
+        // get text after last '\\' in file path. This is the file name
+        let fileName = file.split("\\").pop();
+        // create a file object with the file name
+        const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
+        dataTransfer.items.add(new File(["file"], fileName || ""));
+        // set input files to the file object, then clear the data transfer and continue to next field
+        input[0].files = dataTransfer.files;
+        dataTransfer.items.clear();
+        continue;
+      }
+
       // get ai response
       let response = await answerField(user, fieldInfo);
       console.log("result: " + response);
