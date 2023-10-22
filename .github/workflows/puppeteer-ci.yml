@@ -1,0 +1,20 @@
+name: Puppeteer-CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Test Puppeteer
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run test
+        uses: tj-actions/puppeteer@v4
+        id: puppeteer-test
+        with:
+          files: tests/autofill-tests.mjs
