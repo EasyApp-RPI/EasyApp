@@ -1,0 +1,44 @@
+{
+    "fullName": "",
+    "firstName": "",
+    "lastName": "",
+    "middleName": "",
+    "preferredName": "",
+    "email": "",
+    "phoneNumbers": {
+        "home": "",
+        "work": "",
+        "mobile": "",
+        "fax": "",
+        "pager": "",
+        "other": ""
+    },
+    "phoneExtensions": {
+        "home": "",
+        "work": "",
+        "mobile": "",
+        "fax": "",
+        "pager": "",
+        "other": ""
+    },
+    "address": {
+        "street": "",
+        "city": "",
+        "state": "",
+        "zip": "",
+        "country": ""
+    },
+    "veteranStatus": "",
+    "disabilityStatus": "",
+    "workAuthorization": "",
+    "needSponsorship": "",
+    "graduationDate": {
+        "day": "",
+        "month": "",
+        "year": ""
+    },
+    "genders": [],
+    "raceAndEthnicities": [],
+    "sexualOrientations": [],
+    "other" : null
+}
