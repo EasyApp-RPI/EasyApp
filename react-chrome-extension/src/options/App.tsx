@@ -49,6 +49,31 @@ function EasyAppOptions() {
         {key:"experience", value:'', label:"Experience", type:"textarea"},
         {key:"links", value:'', label:"Links", type:"textarea"},
         {key:"supplement", value:'', label:"SupplementaryText", type:"textarea"},
+
+        // Education box
+        {key:"edu_name", value:'', label:"School Name", type:"input"},
+        {key:"edu_degree", value:'', label:"Degree", type:"input"},
+        {key:"edu_major", value:'', label:"Major", type:"input"},
+        {key:"edu_gpa", value:'', label:"GPA", type:"input"},
+        {key:"edu_from", value:'', label:"From", type:"input"},
+        {key:"edu_to", value:'', label:"To", type:"input"},
+
+        // Interests box
+        {key:"interest_1", value:'', label:"Interest 1", type:"textarea"},
+
+        // Skills box
+        {key:"skill_1", value:'', label:"Skill 1", type:"textarea"},
+
+        // File upload
+        {key:"file_resume", value:'', label:"Upload Resume", type:"file"},
+        {key:"file_CV", value:'', label:"Upload CV", type:"file"},
+        {key:"file_resume", value:'', label:"Upload Resume", type:"file"},
+        {key:"file_link", value:'', label:"Upload Cover Letter", type:"file"},
+        {key:"file_link", value:'', label:"Links", type:"textarea"},
+
+        // Other
+        {key:"other_text", value:'', label:"Other", type:"textare"}
+
     ]);
 
     // On page load/refresh it loads local storage data into the value of the form field.
@@ -112,6 +137,7 @@ function EasyAppOptions() {
                 // File size is within the limit
                 setErrorMessage('');
             }
+
         }
     };
 
