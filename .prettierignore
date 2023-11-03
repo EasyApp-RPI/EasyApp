@@ -1,0 +1,11 @@
+# Prettier Format Ignoring
+
+.github/
+.prettierrc.json
+README.md
+extension
+node_modules
+package-lock.json
+package.json
+tsconfig.json
+webpack.config.js
