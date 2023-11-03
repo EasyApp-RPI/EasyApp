@@ -1,36 +1,7 @@
 import { answerField, answerFile } from "./llm";
 import { FieldInfo, UserInfo, FilePaths } from "./types";
 
-const user: UserInfo = {
-  firstName: "Samir",
-  lastName: "Beall",
-  email: "montea8@rpi.edu",
-  address: "1999 Burdett Ave, Troy, NY 12180",
-  phoneNumber: "(123) 456-78910",
-  zip: "12180",
-  null: "other",
-};
-const files: FilePaths = {
-  resumePath: "C:\\Users\\lordo\\Downloads\\Ariels Resume-1.pdf",
-  transcriptPath: "C:\\Users\\lordo\\Downloads\\Academic Transcript.pdf",
-  coverLetterPath: "null",
-}
-
-// A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
-function cleanUp(input: string): string {
-  while (input[0] != ":") {
-    input = input.slice(1);
-  }
-  input = input.slice(1);
-  return input;
-}
-
-// Uses AI to fill in standard text fields.
-// Standard text fields assume that both the input field and label are wrapped exclusively in a div.
-async function normalFields() {
-
-
-  // Helper function to load all data from chrome storage
+// Helper function to load all data from chrome storage
 const loadAllFormData = async () => {
   // Create an object to hold the form data
   let formDataObject: any = {};
@@ -61,12 +32,43 @@ const loadAllFormData = async () => {
   }
 };
 
+// const user: UserInfo = {
+//   firstName: "Samir",
+//   lastName: "Beall",
+//   email: "montea8@rpi.edu",
+//   address: "1999 Burdett Ave, Troy, NY 12180",
+//   phoneNumber: "(123) 456-78910",
+//   zip: "12180",
+//   null: "other",
+// };
+const files: FilePaths = {
+  resumePath: "C:\\Users\\lordo\\Downloads\\Ariels Resume-1.pdf",
+  transcriptPath: "C:\\Users\\lordo\\Downloads\\Academic Transcript.pdf",
+  coverLetterPath: "null",
+}
+
+// A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
+function cleanUp(input: string): string {
+  while (input[0] != ":") {
+    input = input.slice(1);
+  }
+  input = input.slice(1);
+  return input;
+}
+
+// Uses AI to fill in standard text fields.
+// Standard text fields assume that both the input field and label are wrapped exclusively in a div.
+async function normalFields() {
+
+
+
 // Example usage:
 loadAllFormData().then(formData => {
   console.log('Loaded form data:', formData);
 });
 
   
+  const user = await loadAllFormData() as UserInfo;
   // get all divs
   let divs = document.querySelectorAll("div");
 
@@ -117,6 +119,8 @@ loadAllFormData().then(formData => {
 // a select element with a number of options. The options are treated similarly to an array
 // This array is passed to the AI which then chooses the best response.
 async function dropdownFields() {
+
+  const user = await loadAllFormData() as UserInfo;
   // get dropdowns from page using jquery
   let dropdowns = document.querySelectorAll("select");
   // for each dropdown get the option value field as an array

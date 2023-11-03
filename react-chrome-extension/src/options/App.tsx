@@ -8,7 +8,11 @@ function EasyAppOptions() {
 
     // Sets initial state of form fields
     const [FormData, setFormData] = useState([
-        {key:"name", value:'', label:"Name", type:"input"},
+        {key:"firstName", value:'', label:"First Name", type:"input"},
+        {key:"lastName", value:'', label:"Last Name", type:"input"},
+        {key:"email", value:'', label:"Email", type:"input"},
+        {key:"phoneNumber", value:'', label:"Phone Number", type:"input"},
+
         {key:"major", value:'', label:"Major", type:"input"},
         {key:"interests", value:'', label:"Interests", type:"textarea"},
         {key:"skills", value:'', label:"Skills", type:"textarea"},
@@ -86,9 +90,10 @@ const handleFormDataChange = (index: any, str: any) => {
 
                 {FormData.map((data, index) => (
                     <Form.Group key={index}>
+                        <Form.Label>{data.label}</Form.Label>
                         <Form.Control
                             as = {(index<2)?"input":"textarea"}
-                            placeholder = {data.key}
+                            // placeholder = {data.key}
                             defaultValue = {data.value}
                             value = {data.value}
                             onChange = {(event) => handleFormDataChange(index, event.target.value)}/>
