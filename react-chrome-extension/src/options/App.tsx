@@ -10,7 +10,39 @@ function EasyAppOptions() {
 
     // Sets initial state of form fields
     const [FormData, setFormData] = useState([
-        {key:"name", value:'', label:"Name", type:"input"},
+        {key:"First name", value:'', label:"First Name", type:"input"},
+        {key:"middle name", value:'', label:"Middle Name", type:"input"},
+        {key:"last name", value:'', label:"Last Name", type:"input"},
+        {key:"gender", value:'', label:"Gender", type:"IDK"},
+        {key:"sexual orientation", value:'', label:"Sexual Orientation", type:"IDK"},
+        {key:"race", value:'', label:"Race", type:"IDK"},
+
+
+        {key:"email", value:'', label:"Email", type:"input"},
+        //{key:"work phone", value:'', label:"Work Phone", type:"input"},
+        //{key:"mobile phone", value:'', label:"Mobile Phone", type:"input"},
+        //{key:"fax", value:'', label:"Pager", type:"input"},
+        //{key:"pager", value:'', label:"Pager", type:"input"},
+        //{key:"home phone", value:'', label:"Home Phone", type:"input"},
+        //{key:"other phone", value:'', label:"Mobile Phone", type:"input"},
+
+
+        {key:"country", value:'', label:"Country", type:"input"},
+        {key:"street", value:'', label:"Street", type:"input"},
+        {key:"town", value:'', label:"Town", type:"input"},
+        {key:"zip code", value:'', label:"Zip Code", type:"input"},
+        {key:"state", value:'', label:"State", type:"input"},
+
+
+        {key:"company", value:'', label:"Company", type:"input"},
+        {key:"title", value:'', label:"Title", type:"input"},
+        {key:"from", value:'', label:"From", type:"input"},
+        {key:"to", value:'', label:"To", type:"input"},
+        {key:"description", value:'', label:"Description", type:"input"},
+
+
+
+
         {key:"major", value:'', label:"Major", type:"input"},
         {key:"interests", value:'', label:"Interests", type:"textarea"},
         {key:"skills", value:'', label:"Skills", type:"textarea"},
@@ -110,6 +142,7 @@ function EasyAppOptions() {
                             onChange = {(event) => handleFormDataChange(index, event.target.value)}/>
                     </Form.Group>
                 ))}
+
 
                 <Form.Group>
                     <Form.Label>Upload Resume:</Form.Label>
