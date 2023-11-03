@@ -28,6 +28,44 @@ function cleanUp(input: string): string {
 // Uses AI to fill in standard text fields.
 // Standard text fields assume that both the input field and label are wrapped exclusively in a div.
 async function normalFields() {
+
+
+  // Helper function to load all data from chrome storage
+const loadAllFormData = async () => {
+  // Create an object to hold the form data
+  let formDataObject: any = {};
+
+  // Promise to handle asynchronous storage access
+  let promise = new Promise((resolve, reject) => {
+    // Retrieve all keys at once
+    chrome.storage.sync.get(null, function(items) {
+      if (chrome.runtime.lastError) {
+        // Handle errors here
+        reject(chrome.runtime.lastError);
+      }
+      // Loop through all items in storage
+      for (const [key, value] of Object.entries(items)) {
+        // Add each item to formDataObject
+        formDataObject[key] = value;
+      }
+      resolve(formDataObject);
+    });
+  });
+
+  // Wait for the promise to resolve with the form data object
+  try {
+    return await promise;
+  } catch (error) {
+    console.error('Failed to load form data from storage:', error);
+    return {}; // Return an empty object in case of error
+  }
+};
+
+// Example usage:
+loadAllFormData().then(formData => {
+  console.log('Loaded form data:', formData);
+});
+
   
   // get all divs
   let divs = document.querySelectorAll("div");
