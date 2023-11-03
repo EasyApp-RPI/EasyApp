@@ -2,10 +2,72 @@
 
 import React from 'react';
 import {Container, Form, Button} from 'react-bootstrap';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, ChangeEvent} from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+const openDB = (): Promise<IDBDatabase> => {
+    return new Promise<IDBDatabase>((resolve, reject) => {
+      const request = window.indexedDB.open('FilesDB', 1);
+  
+      request.onerror = (event: Event) => {
+        reject('Error opening database');
+      };
+  
+      request.onsuccess = (event: Event) => {
+        const target = event.target as IDBOpenDBRequest;
+        const db = target.result as IDBDatabase;
+        if (db) {
+          resolve(db);
+        } else {
+          reject('Failed to open database');
+        }
+      };
+  
+      request.onupgradeneeded = (event: Event) => {
+        const target = event.target as IDBOpenDBRequest;
+        const db = target.result as IDBDatabase;
+        const objectStore = db.createObjectStore('files', { autoIncrement: true });
+        objectStore.createIndex('name', 'name', { unique: false });
+      };
+    });
+  };
+  
+  const saveFile = (file:File) => {
+    return openDB().then((db) => {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('files', 'readwrite');
+        const objectStore = transaction.objectStore('files');
+        const request = objectStore.add(file);
+  
+        request.onsuccess = () => {
+          resolve('File saved successfully');
+        };
+  
+        request.onerror = () => {
+          reject('Error saving file');
+        };
+      });
+    });
+  };
+  
+  const getAllFiles = () => {
+    return openDB().then((db) => {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('files', 'readonly');
+        const objectStore = transaction.objectStore('files');
+        const request = objectStore.getAll();
+  
+        request.onsuccess = () => {
+          resolve(request.result);
+        };
+  
+        request.onerror = () => {
+          reject('Error getting files');
+        };
+      });
+    });
+  };
 function EasyAppOptions() {
 
     // Sets initial state of form fields
@@ -95,25 +157,17 @@ function EasyAppOptions() {
     // Limit the size of the file uploaded
     const [errorMessage, setErrorMessage] = useState('');
 
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files && event.target.files[0];
-
-        if (selectedFile) {
-            // Adjust the maximum file size (in bytes) as needed
-            const maxSize = 1024 * 1024 * 10; // 10 MB
-
-            if (selectedFile.size > maxSize) {
-                setErrorMessage('File size exceeds the limit (10MB)');
-                event.target.value = ''; // Clear the file input
-                alert("File size exceeds the limit (10MB)");
-
-            } else {
-                // File size is within the limit
-                setErrorMessage('');
-            }
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target && e.target.files && e.target.files.length > 0) {
+          const file = e.target.files[0];
+          await saveFile(file);
         }
-    };
+      };
+
+      const handleRetrieveFiles = async () => {
+        const files = await getAllFiles();
+        console.log(files); // You can handle these files as needed (e.g., display in the UI)
+      };
 
 
 
@@ -151,13 +205,15 @@ function EasyAppOptions() {
 
                 <Form.Group>
                     <Form.Label>Upload Cover Letter:</Form.Label>
-                    <Form.Control type="file" name="Cover Letter" />
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="Cover Letter" onChange={handleFileChange}/>
                 </Form.Group>
 
                 <Form.Group>
                     <Form.Label>Upload CV:</Form.Label>
-                    <Form.Control type="file" name="CV" />
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="CV" onChange={handleFileChange}/>
                 </Form.Group>
+                <Button onClick={handleRetrieveFiles}>Retrieve Files</Button>
+
                 <Container>
                     <Row>
                         <Col>
