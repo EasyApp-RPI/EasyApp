@@ -32,6 +32,6 @@ yarn-error.log*
 # PDF Parse
 PDFParse/*
 !PDFParse/pdfparse.ts
-!PDFParse/pdfsort.ts
 !PDFParse/pdfparse.js
-!PDFParse/pdfsort.js
+!PDFParse/coverParse.ts
+!PDFParse/coverParse.js
