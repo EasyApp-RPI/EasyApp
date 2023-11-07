@@ -1,53 +1,53 @@
 name: Enhancement Request
-description: Tell us what existing feature we could enhance 
-title: "[Enhancement Request] <Brief Description>"
-labels: [ enhancement ]
+description: Tell us what existing feature we could enhance
+title: '[Enhancement Request] <Brief Description>'
+labels: [enhancement]
 body:
   - type: textarea
     id: enhancement_description
     attributes:
-      label: "Describe the Enhancement"
-      description: "A clear and concise description of what you are trying to improve."
-      placeholder: "Ex. I think it would be better to do X feature this way as [...]"
+      label: 'Describe the Enhancement'
+      description: 'A clear and concise description of what you are trying to improve.'
+      placeholder: 'Ex. I think it would be better to do X feature this way as [...]'
     validations:
       required: true
   - type: textarea
     id: current_feature_description
     attributes:
-      label: "Describe the current behavior"
-      description: "A clear and concise description of what already happens."
-      placeholder: "Ex. Currently X feature does this [...] and the problem with this is [...]"
+      label: 'Describe the current behavior'
+      description: 'A clear and concise description of what already happens.'
+      placeholder: 'Ex. Currently X feature does this [...] and the problem with this is [...]'
     validations:
       required: true
   - type: textarea
     id: alternative_description
     attributes:
-      label: "Describe alternatives to your enhancement"
-      description: "A clear and concise description of any other alternatives to the enhancement you mentioned."
-      placeholder: "Ex. I think doing X feature [...] way would also work as [...]"
+      label: 'Describe alternatives to your enhancement'
+      description: 'A clear and concise description of any other alternatives to the enhancement you mentioned.'
+      placeholder: 'Ex. I think doing X feature [...] way would also work as [...]'
     validations:
       required: false
   - type: textarea
     id: screenshot
     attributes:
-      label: "Screenshots"
-      description: "If applicable, add screenshots to help explain your enhancement or current behavior."
-      placeholder: "![DESCRIPTION](LINK.png)"
+      label: 'Screenshots'
+      description: 'If applicable, add screenshots to help explain your enhancement or current behavior.'
+      placeholder: '![DESCRIPTION](LINK.png)'
     validations:
       required: false
   - type: textarea
     id: additional_context
     attributes:
-      label: "Additional Context"
-      description: "Add any other context about the enhancement here."
+      label: 'Additional Context'
+      description: 'Add any other context about the enhancement here.'
     validations:
       required: false
   - type: markdown
     attributes:
-      value: "## Thank you for contributing to our project!"
+      value: '## Thank you for contributing to our project!'
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this enhancement request.
         Don't forget to add the corresponding labels relating to this issue.
-        EasyApp. A [Rensselaer Center for Open Source](https://new.rcos.io/) project. 
+        EasyApp. A [Rensselaer Center for Open Source](https://new.rcos.io/) project.

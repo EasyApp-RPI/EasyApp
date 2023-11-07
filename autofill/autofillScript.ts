@@ -1,15 +1,46 @@
 import { answerField, answerFile, fieldType } from "./llm";
 import { FieldInfo, UserInfo, FilePaths, inputElements } from "./types";
 
-const user: UserInfo = {
-  firstName: "Samir",
-  lastName: "Beall",
-  email: "montea8@rpi.edu",
-  address: "1999 Burdett Ave, Troy, NY 12180",
-  phoneNumber: "(123) 456-78910",
-  zip: "12180",
-  null: "other",
+// Helper function to load all data from chrome storage
+const loadAllFormData = async () => {
+  // Create an object to hold the form data
+  let formDataObject: any = {};
+
+  // Promise to handle asynchronous storage access
+  let promise = new Promise((resolve, reject) => {
+    // Retrieve all keys at once
+    chrome.storage.sync.get(null, function(items) {
+      if (chrome.runtime.lastError) {
+        // Handle errors here
+        reject(chrome.runtime.lastError);
+      }
+      // Loop through all items in storage
+      for (const [key, value] of Object.entries(items)) {
+        // Add each item to formDataObject
+        formDataObject[key] = value;
+      }
+      resolve(formDataObject);
+    });
+  });
+
+  // Wait for the promise to resolve with the form data object
+  try {
+    return await promise;
+  } catch (error) {
+    console.error('Failed to load form data from storage:', error);
+    return {}; // Return an empty object in case of error
+  }
 };
+
+// const user: UserInfo = {
+//   firstName: "Samir",
+//   lastName: "Beall",
+//   email: "montea8@rpi.edu",
+//   address: "1999 Burdett Ave, Troy, NY 12180",
+//   phoneNumber: "(123) 456-78910",
+//   zip: "12180",
+//   null: "other",
+// };
 const files: FilePaths = {
   resumePath: "C:\\Users\\lordo\\Downloads\\Ariels Resume-1.pdf",
   transcriptPath: "C:\\Users\\lordo\\Downloads\\Academic Transcript.pdf",
@@ -170,6 +201,8 @@ async function fileFields(data: inputElements[]) {
 // a select element with a number of options. The options are treated similarly to an array
 // This array is passed to the AI which then chooses the best response.
 async function dropdownFields() {
+
+  const user = await loadAllFormData() as UserInfo;
   // get dropdowns from page using jquery
   let dropdowns = document.querySelectorAll("select");
   // for each dropdown get the option value field as an array
@@ -207,4 +240,4 @@ getElements().then((data) => {
   fileFields(data);
 });
 
-export {}
+export {};
