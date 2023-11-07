@@ -35,6 +35,7 @@ function EasyAppOptions() {
 
 
         {key:"company", value:'', label:"Company", type:"input"},
+        {key:"comp_location", value:'', label:"Location", type:"input"},
         {key:"title", value:'', label:"Title", type:"input"},
         {key:"from", value:'', label:"From", type:"input"},
         {key:"to", value:'', label:"To", type:"input"},
@@ -52,11 +53,13 @@ function EasyAppOptions() {
 
         // Education box
         {key:"edu_name", value:'', label:"School Name", type:"input"},
-        {key:"edu_degree", value:'', label:"Degree", type:"input"},
+        {key:"edu_degree", value:'', label:"Degree", type:"dropdown"},
         {key:"edu_major", value:'', label:"Major", type:"input"},
+        {key:"edu_location", value:'', label:"Location", type:"input"},
         {key:"edu_gpa", value:'', label:"GPA", type:"input"},
         {key:"edu_from", value:'', label:"From", type:"input"},
         {key:"edu_to", value:'', label:"To", type:"input"},
+        {key:"edu_current", value:'', label:"Enrolling", type:"checkbox"},
 
         // Interests box
         {key:"interest_1", value:'', label:"Interest 1", type:"textarea"},
