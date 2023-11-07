@@ -1,6 +1,6 @@
 import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
-import { UserInfo, FieldInfo, FilePaths} from "./types";
+import { UserInfo, FieldInfo, FilePaths, JobInfo} from "./types";
 import { LLMChain } from "langchain/chains";
 
 export const model = new OpenAI(
@@ -73,6 +73,75 @@ id: {id}
 input text:
 `);
 
+const datePrompt = PromptTemplate.fromTemplate(`
+{userJobs}
+
+Using the user's job information, respond to the input field info in the format of {format}
+If the user is missing the day in the date, respond with the first day of the month
+
+input label: startDate
+name: startDate
+id: startDate
+
+input text:
+{startDate}
+
+input label: endDate
+name: endDate
+id: endDate
+
+input text:
+{endDate}
+
+input label: {inputLabel}
+name: {name}
+id: {id}
+
+input text:
+`);
+
+const fieldTypePrompt = PromptTemplate.fromTemplate(`
+What type of field is this? 
+Use its information as well as the previous field's information to determine the type.
+The options are: basic, date, file, previousEmployment
+
+A field will only be a file if "type: file"
+
+input label: startDate
+name: startDate
+id: startDate
+type: date
+header: Employment
+
+input text:
+date
+
+input label: potition
+name: position
+id: pos1
+type: text
+header: Employment
+
+input text:
+previousEmployment
+
+input label: Address
+name: Address
+id: address
+type: text
+header: Personal
+
+input text:
+basic
+
+input label: {inputLabel}
+name: {name}
+id: {id}
+type: {type}
+header: {header}
+
+input text:
+`);
 
 export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, dropDown: string[] = [] ) => {
   if (dropDown.length > 0) {
@@ -116,4 +185,28 @@ export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => 
     resumePath: filePaths.resumePath,
   });
  return result.text as string;
+}
+
+export const answerDate = async (userJob: JobInfo, fieldInfo: FieldInfo, format: string) => {
+  const chain = new LLMChain({ llm: model, prompt: datePrompt });
+  let result = await chain.call({
+    userJobs: JSON.stringify(userJob),
+    inputLabel: fieldInfo.inputLabel,
+    name: fieldInfo.name,
+    id: fieldInfo.id,
+    format: format,
+  });
+  return result.text as string;
+}
+
+export const fieldType = async (fieldInfo: FieldInfo) => {
+  const chain = new LLMChain({ llm: model, prompt: fieldTypePrompt });
+  let result = await chain.call({
+    inputLabel: fieldInfo.inputLabel,
+    name: fieldInfo.name,
+    id: fieldInfo.id,
+    type: fieldInfo.type,
+    header: fieldInfo.header,
+  });
+  return result.text as string;
 }

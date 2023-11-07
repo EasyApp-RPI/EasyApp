@@ -9,6 +9,8 @@ export interface FieldInfo {
   name: string,
   id: string,
   placeholder: string,
+  type: string | null,
+  header: string,
 }
 
 export interface FilePaths {
@@ -17,3 +19,18 @@ export interface FilePaths {
   coverLetterPath: string,
 }
 
+export interface JobInfo {
+  position: string,
+  company: string,
+  location: string,
+  startDate: string,
+  endDate: string,
+  description: string,
+}
+
+export interface inputElements {
+  label: HTMLLabelElement,
+  inputs: Array<HTMLInputElement>,
+  type: string | null,
+  header: string,
+}

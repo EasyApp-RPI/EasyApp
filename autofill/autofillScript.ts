@@ -1,5 +1,5 @@
-import { answerField, answerFile } from "./llm";
-import { FieldInfo, UserInfo, FilePaths } from "./types";
+import { answerField, answerFile, fieldType } from "./llm";
+import { FieldInfo, UserInfo, FilePaths, inputElements } from "./types";
 
 const user: UserInfo = {
   firstName: "Samir",
@@ -16,6 +16,10 @@ const files: FilePaths = {
   coverLetterPath: "null",
 }
 
+function isBefore(element1: Element, element2: Element): boolean {
+  return element1.compareDocumentPosition(element2) === Node.DOCUMENT_POSITION_PRECEDING;
+}
+
 // A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
 function cleanUp(input: string): string {
   while (input[0] != ":") {
@@ -25,53 +29,140 @@ function cleanUp(input: string): string {
   return input;
 }
 
+
+async function getElements() {
+  let data : inputElements[] = [];
+  let inputs : HTMLInputElement[] = []
+  let stack : Element[] = [document.body]; // Use a stack for DFS
+  let isLabelFound = false;
+  let visited : Set<Element> = new Set();
+  let currentLabel: HTMLLabelElement | null = null;
+  let currHeader: string = "";
+
+  // go through html object by object and get all labels and inputs
+  while (stack.length > 0) {
+    let current = stack.pop(); // Pop a node from the stack
+
+    if (current instanceof HTMLHeadingElement) {
+      currHeader = current.textContent || "";
+    }
+
+    if (!current || visited.has(current)) continue;
+    visited.add(current);
+
+    if (current instanceof HTMLLabelElement) {
+      if (isLabelFound && currentLabel && inputs.length > 0){
+        let fieldInfo : FieldInfo = {
+          inputLabel: currentLabel.textContent || "",
+          name: inputs[0].name || "",
+          id: inputs[0].id || "",
+          placeholder: inputs[0].placeholder || "",
+          type: inputs[0].type || null,
+          header: currHeader,
+        };
+        let prev
+        if (data.length > 1) prev = data[data.length - 1].label.textContent || "";
+        else  prev = "";
+        let type = await fieldType(fieldInfo);
+        data.push({label: currentLabel, inputs: inputs, type: type, header: currHeader});
+        inputs = [];
+      }
+      currentLabel = current;
+      isLabelFound = true;
+    } else if (isLabelFound && current instanceof HTMLInputElement) {
+      inputs.push(current);
+    }
+
+    let child = current.lastElementChild;
+    while (child) {
+      stack.push(child);
+      child = child.previousElementSibling;
+    }
+  }
+
+  // Add the inputs found after the last label
+  if (isLabelFound && currentLabel && inputs.length > 0) {
+    let fieldInfo : FieldInfo = {
+      inputLabel: currentLabel.textContent || "",
+      name: inputs[0].name || "",
+      id: inputs[0].id || "",
+      placeholder: inputs[0].placeholder || "",
+      type: inputs[0].type || null,
+      header: currHeader,
+    };
+
+    let prev
+    if (data.length > 1) prev = data[data.length - 1].label.textContent || "";
+    else  prev = "";
+
+    let type = await fieldType(fieldInfo);
+
+    data.push({label: currentLabel, inputs: inputs, type: type, header: currHeader});
+  }
+
+  for (let i of data){
+    console.log("Label: \n" + i.label.textContent);
+    console.log("Inputs:" + i.inputs.length);
+    console.log("Type: " + i.type);
+  }
+
+  return data;
+  
+}
+      
+
+
+
+
+
 // Uses AI to fill in standard text fields.
 // Standard text fields assume that both the input field and label are wrapped exclusively in a div.
-async function normalFields() {
+async function normalFields(data: inputElements[]) {
   
-  // get all divs
-  let divs = document.querySelectorAll("div");
+  // get all inputElemets with a type of basic
+  let basicFields = data.filter((i) => i.type == "basic");
+  // for each input element get the label and input
+  for (let i of basicFields) {
+    let fieldInfo: FieldInfo = {
+      inputLabel: i.label.textContent || "",
+      name: i.inputs[0].name || "",
+      id: i.inputs[0].id || "",
+      placeholder: i.inputs[0].placeholder || "",
+      type: i.inputs[0].type || null,
+      header: i.header,
+    };
 
-  // for each div, get labels and inputs contained by the div
-  for (let i of divs) {
-    // get all divs with one label and one input
-    let label = i.querySelectorAll("label");
-    let input = i.querySelectorAll("input");
-    if (label.length == 1 && input.length == 1) {
-      // give ai the information including the label text, input id, and input name.
-      // This helps it be more accurate when presented with ambiguous fields
-      let fieldInfo : FieldInfo = {
-        inputLabel: label[0].textContent || "",
-        name: input[0].name || "",
-        id: input[0].id || "",
-        placeholder: input[0].placeholder || "",
-      };
+    // get ai response
+    let response = await answerField(user, fieldInfo);
+    // set input value to response
+    console.log("result (normal): " + response);
+    if (response.trim() != "null") i.inputs[0].value = response.trim();
+  }
+}
 
-      // if the input is a file input, use the answerFile function
-      if(input[0].type == "file") {
+async function fileFields(data: inputElements[]) {
+  // get all inputElemets with a type of file
+  let fileFields = data.filter((i) => i.type == "file");
+  for (let i of fileFields) {
+    let fieldInfo: FieldInfo = {
+      inputLabel: i.label.textContent || "",
+      name: i.inputs[0].name || "",
+      id: i.inputs[0].id || "",
+      placeholder: i.inputs[0].placeholder || "",
+      type: i.inputs[0].type || null,
+      header: i.header,
+    };
+   let file = await answerFile(files, fieldInfo);
+   if (file == "null") continue;
 
-        // get AI response for file path
-        let file = await answerFile(files, fieldInfo);
-        console.log("result (file): " + file);
-        // if there is no file to upload, continue to next field
-        if (file == "null") continue;
-
-        // get text after last '\\' in file path. This is the file name
-        let fileName = file.split("\\").pop();
-        // create a file object with the file name
-        const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
-        dataTransfer.items.add(new File(["file"], fileName || ""));
-        // set input files to the file object, then clear the data transfer and continue to next field
-        input[0].files = dataTransfer.files;
-        dataTransfer.items.clear();
-        continue;
-      }
-
-      // get ai response
-      let response = await answerField(user, fieldInfo);
-      console.log("result: " + response);
-      if (input[0] && response.trim() != "null") (input[0] as HTMLInputElement).value = response;
-    }
+   // get text after last '\\' in file path. This is the file name
+   let fileName = file.split("\\").pop();
+   // create a file object with the file name
+   const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
+   dataTransfer.items.add(new File(["file"], fileName || ""));
+   // set input files to the file object, then clear the data transfer and continue to next field
+   i.inputs[0].files = dataTransfer.files;
+   dataTransfer.items.clear();
   }
 }
 
@@ -97,6 +188,8 @@ async function dropdownFields() {
       id: i.id || "",
       name: "",
       placeholder: dropdownOptions[0] || "",
+      type: i.type || null,
+      header: "",
   
     };
 
@@ -108,7 +201,10 @@ async function dropdownFields() {
   }
 }
 
-normalFields();
-dropdownFields();
+
+getElements().then((data) => {
+  normalFields(data);
+  fileFields(data);
+});
 
 export {}
