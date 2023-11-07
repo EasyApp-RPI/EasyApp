@@ -19,6 +19,7 @@ build
 react-chrome-extension/build
 
 # misc
+.env
 .DS_Store
 .env.local
 .env.development.local
