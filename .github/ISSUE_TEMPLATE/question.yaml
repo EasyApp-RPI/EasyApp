@@ -1,37 +1,37 @@
 name: A question
 description: If you have a question about anything EasyApp related
-title: "[Question] <Your question(s)>"
-labels: [ question ]
+title: '[Question] <Your question(s)>'
+labels: [question]
 body:
   - type: textarea
     id: question_description
     attributes:
-      label: "Question"
-      description: "Where you put the question you have."
-      placeholder: "Ex. I have a question about [...]"
+      label: 'Question'
+      description: 'Where you put the question you have.'
+      placeholder: 'Ex. I have a question about [...]'
     validations:
       required: true
   - type: textarea
     id: screenshot
     attributes:
-      label: "Screenshots"
-      description: "If applicable, add screenshots to help explain your question."
-      placeholder: "![DESCRIPTION](LINK.png)"
+      label: 'Screenshots'
+      description: 'If applicable, add screenshots to help explain your question.'
+      placeholder: '![DESCRIPTION](LINK.png)'
     validations:
       required: false
   - type: textarea
     id: additional_context
     attributes:
-      label: "Additional Context"
-      description: "Add any other context about the question here."
+      label: 'Additional Context'
+      description: 'Add any other context about the question here.'
     validations:
       required: false
   - type: markdown
     attributes:
-      value: "## Thank you for contributing to our project!"
+      value: '## Thank you for contributing to our project!'
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this form.
         We will get back to you as soon as possible!
-        EasyApp. A [Rensselaer Center for Open Source](https://new.rcos.io/) project. 
+        EasyApp. A [Rensselaer Center for Open Source](https://new.rcos.io/) project.

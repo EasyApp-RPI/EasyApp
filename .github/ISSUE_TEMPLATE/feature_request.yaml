@@ -1,45 +1,45 @@
 name: Feature Request
 description: Suggest a feature for EasyApp
-title: "[Feature Request] <Brief Description>"
-labels: [ feature ]
+title: '[Feature Request] <Brief Description>'
+labels: [feature]
 body:
   - type: textarea
     id: feature_description
     attributes:
-      label: "Describe the Feature"
-      description: "A clear and concise description of the feature you want."
-      placeholder: "Ex. I think X feature would be sick because [...]"
+      label: 'Describe the Feature'
+      description: 'A clear and concise description of the feature you want.'
+      placeholder: 'Ex. I think X feature would be sick because [...]'
     validations:
       required: true
   - type: textarea
     id: bug_description
     attributes:
-      label: "Is this feature related to a bug? If so please describe"
-      description: "A clear and concise description of a bug the feature could fix."
-      placeholder: "Ex. This feature can fix X bug as [...]"
+      label: 'Is this feature related to a bug? If so please describe'
+      description: 'A clear and concise description of a bug the feature could fix.'
+      placeholder: 'Ex. This feature can fix X bug as [...]'
     validations:
       required: false
   - type: textarea
     id: screenshot
     attributes:
-      label: "Screenshots"
-      description: "If applicable, add screenshots to help explain your feature or bug."
-      placeholder: "![DESCRIPTION](LINK.png)"
+      label: 'Screenshots'
+      description: 'If applicable, add screenshots to help explain your feature or bug.'
+      placeholder: '![DESCRIPTION](LINK.png)'
     validations:
       required: false
   - type: textarea
     id: additional_context
     attributes:
-      label: "Additional Context"
-      description: "Add any other context about the feature here."
+      label: 'Additional Context'
+      description: 'Add any other context about the feature here.'
     validations:
       required: false
   - type: markdown
     attributes:
-      value: "## Thank you for contributing to our project!"
+      value: '## Thank you for contributing to our project!'
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this enhancement request.
         Don't forget to add the corresponding labels relating to this issue.
-        EasyApp. A [Rensselaer Center for Open Source](https://new.rcos.io/) project. 
+        EasyApp. A [Rensselaer Center for Open Source](https://new.rcos.io/) project.
