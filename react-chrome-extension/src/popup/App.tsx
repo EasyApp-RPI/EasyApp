@@ -56,8 +56,6 @@ function EasyAppPopup() {
       if (result[fields[i]].length !== 0) {
         filled = true;
       }
-      console.log(result[fields[i]]);
-      console.log(filled);
 
       // Just stops a little early :)
       if (filled) {
@@ -70,9 +68,13 @@ function EasyAppPopup() {
       SetAutofillText('Error - Fill out Settings Page');
       SetAutofillVariant('danger');
     } else {
-      SetAutofillText('Autofill Page');
-      SetAutofillVariant('primary');
       clickAutofill();
+      SetAutofillText('Successfully Autofilled Page!');
+      SetAutofillVariant('success');
+      setTimeout(() => {
+        SetAutofillText('Autofill Page');
+        SetAutofillVariant('primary');
+      }, 3000);
     }
   };
 
