@@ -1,6 +1,6 @@
 // This app is the popup window that has buttons for the user to triger actions, and links to the options page
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Image, Button } from 'react-bootstrap';
 
 let clickSettings = () => {
@@ -31,6 +31,51 @@ let clickAutofill = () => {
 };
 
 function EasyAppPopup() {
+  const [autofillText, SetAutofillText] = useState('Autofill Page');
+  const [autofillVariant, SetAutofillVariant] = useState('primary');
+
+  // Stored Form Fields (update with options page)
+  const fields = [
+    'name',
+    'major',
+    'interests',
+    'skills',
+    'experience',
+    'links',
+    'supplement',
+  ];
+
+  // Checks if any settings from the settings page have been filled out
+  let checkAutofill = async () => {
+    let filled = false;
+
+    // Check Local storage to see if anything is filled in
+    for (let i = 0; i < fields.length; i++) {
+      const result = await chrome.storage.sync.get([fields[i]]);
+
+      if (result[fields[i]].length !== 0) {
+        filled = true;
+      }
+      console.log(result[fields[i]]);
+      console.log(filled);
+
+      // Just stops a little early :)
+      if (filled) {
+        break;
+      }
+    }
+
+    if (!filled) {
+      // Change Autofill Button when nothing is filled out
+      SetAutofillText('Error - Fill out Settings Page');
+      SetAutofillVariant('danger');
+    } else {
+      SetAutofillText('Autofill Page');
+      SetAutofillVariant('primary');
+      clickAutofill();
+    }
+  };
+
   return (
     <Container className='text-center m-1'>
       <Image
@@ -40,11 +85,11 @@ function EasyAppPopup() {
         className='mx-auto d-block w-75'
       />
       <Button
-        variant='primary'
+        variant={autofillVariant}
         className='w-100 mb-3'
         id='autofill'
-        onClick={clickAutofill}>
-        Autofill Page
+        onClick={checkAutofill}>
+        {autofillText}
       </Button>
       <Button variant='primary' className='w-100 mb-3'>
         Navigate Listings
