@@ -47,10 +47,6 @@ const files: FilePaths = {
   coverLetterPath: "null",
 }
 
-function isBefore(element1: Element, element2: Element): boolean {
-  return element1.compareDocumentPosition(element2) === Node.DOCUMENT_POSITION_PRECEDING;
-}
-
 // A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
 function cleanUp(input: string): string {
   while (input[0] != ":") {
@@ -58,6 +54,15 @@ function cleanUp(input: string): string {
   }
   input = input.slice(1);
   return input;
+}
+
+function callCorrect(input: inputElements){
+  if (input.type == "file") {
+    fileFields(input)
+  }
+  else if (input.type == "basic") {
+    normalFields(input)
+  }
 }
 
 
@@ -96,6 +101,7 @@ async function getElements() {
         else  prev = "";
         let type = await fieldType(fieldInfo);
         data.push({label: currentLabel, inputs: inputs, type: type, header: currHeader});
+        callCorrect(data[data.length - 1]);
         inputs = [];
       }
       currentLabel = current;
@@ -148,40 +154,39 @@ async function getElements() {
 
 // Uses AI to fill in standard text fields.
 // Standard text fields assume that both the input field and label are wrapped exclusively in a div.
-async function normalFields(data: inputElements[]) {
-  
-  // get all inputElemets with a type of basic
-  let basicFields = data.filter((i) => i.type == "basic");
+async function normalFields(data: inputElements) {
+  const user = await loadAllFormData() as UserInfo;
   // for each input element get the label and input
-  for (let i of basicFields) {
+  let j = 0;
+  for (let i of data.inputs) {
     let fieldInfo: FieldInfo = {
-      inputLabel: i.label.textContent || "",
-      name: i.inputs[0].name || "",
-      id: i.inputs[0].id || "",
-      placeholder: i.inputs[0].placeholder || "",
-      type: i.inputs[0].type || null,
-      header: i.header,
+      inputLabel: data.label.textContent || "",
+      name: data.inputs[0].name + j.toString || "",
+      id: data.inputs[0].id || "",
+      placeholder: data.inputs[0].placeholder || "",
+      type: data.inputs[0].type || null,
+      header: data.header,
     };
 
     // get ai response
     let response = await answerField(user, fieldInfo);
     // set input value to response
     console.log("result (normal): " + response);
-    if (response.trim() != "null") i.inputs[0].value = response.trim();
+    if (response.trim() != "null") i.value = response.trim();
+    j++;
   }
 }
 
-async function fileFields(data: inputElements[]) {
+async function fileFields(data: inputElements) {
   // get all inputElemets with a type of file
-  let fileFields = data.filter((i) => i.type == "file");
-  for (let i of fileFields) {
+  for (let i of data.inputs) {
     let fieldInfo: FieldInfo = {
-      inputLabel: i.label.textContent || "",
-      name: i.inputs[0].name || "",
-      id: i.inputs[0].id || "",
-      placeholder: i.inputs[0].placeholder || "",
-      type: i.inputs[0].type || null,
-      header: i.header,
+      inputLabel: data.label.textContent || "",
+      name: data.inputs[0].name || "",
+      id: data.inputs[0].id || "",
+      placeholder: data.inputs[0].placeholder || "",
+      type: data.inputs[0].type || null,
+      header: data.header,
     };
    let file = await answerFile(files, fieldInfo);
    if (file == "null") continue;
@@ -192,7 +197,7 @@ async function fileFields(data: inputElements[]) {
    const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
    dataTransfer.items.add(new File(["file"], fileName || ""));
    // set input files to the file object, then clear the data transfer and continue to next field
-   i.inputs[0].files = dataTransfer.files;
+   i.files = dataTransfer.files;
    dataTransfer.items.clear();
   }
 }
@@ -203,6 +208,7 @@ async function fileFields(data: inputElements[]) {
 async function dropdownFields() {
 
   const user = await loadAllFormData() as UserInfo;
+  
   // get dropdowns from page using jquery
   let dropdowns = document.querySelectorAll("select");
   // for each dropdown get the option value field as an array
@@ -235,9 +241,8 @@ async function dropdownFields() {
 }
 
 
-getElements().then((data) => {
-  normalFields(data);
-  fileFields(data);
-});
+getElements()
+dropdownFields()
 
 export {};
+
