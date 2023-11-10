@@ -274,10 +274,11 @@ function EasyAppOptions() {
                         <Container>
                             <Row>
                                 <Col>
-                                    <Button onClick={handleSubmit}>Submit</Button>{' '}
+                                    <Button variant='primary'
+                                            onClick={handleSubmit}>Submit</Button>{' '}
                                 </Col>
                                 <Col>
-                                    <Button style={{backgroundColor: '#FF0000'}}
+                                    <Button variant= 'danger'
                                             onClick={handleClear}>Clear</Button>{' '}
                                 </Col>
                             </Row>
