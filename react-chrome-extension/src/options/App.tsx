@@ -162,17 +162,7 @@ function EasyAppOptions() {
     }
 
     // Stores current FormData in the local storage
-    const handleSubmit = () => {
-        let dataToSave: { [key: string]: string } = {};
-        FormData.forEach((data) => {
-            dataToSave[data.key] = data.value.trim();
-        });
 
-        chrome.storage.sync.set(dataToSave, function () {
-            console.log('Data saved to chrome.storage.sync.');
-            handleFormDataLoad();
-        });
-    }
 
 
     const handleClear = () => {
@@ -186,13 +176,21 @@ function EasyAppOptions() {
     // Limit the size of the file uploaded
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target && e.target.files && e.target.files.length > 0) {
-          const file = e.target.files[0];
-          await saveFile(file);
-        }
-      };
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
+    };
+
+    const traverseFileInputs = () => {
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        console.log(fileInputs);
+        fileInputs.forEach((input) => {
+            if (input instanceof HTMLInputElement && input.files && input.files.length > 0) {
+                const file = input.files[0];
+                saveFile(file);
+            }
+
+        });
+    };
       const handleRetrieveFiles = async () => {
         const files = await getAllFiles();
         console.log(files); // You can handle these files as needed (e.g., display in the UI)
@@ -201,6 +199,19 @@ function EasyAppOptions() {
         handleFormDataLoad();
         handleFileChange;
     }, [])
+
+    const handleSubmit = () => {
+        traverseFileInputs();
+        let dataToSave: { [key: string]: string } = {};
+        FormData.forEach((data) => {
+            dataToSave[data.key] = data.value.trim();
+        });
+
+        chrome.storage.sync.set(dataToSave, function () {
+            console.log('Data saved to chrome.storage.sync.');
+            handleFormDataLoad();
+        });
+    }
 
 
         return (
