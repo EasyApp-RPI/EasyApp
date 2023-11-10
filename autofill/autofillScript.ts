@@ -32,21 +32,6 @@ const loadAllFormData = async () => {
   }
 };
 
-// const user: UserInfo = {
-//   firstName: "Samir",
-//   lastName: "Beall",
-//   email: "montea8@rpi.edu",
-//   address: "1999 Burdett Ave, Troy, NY 12180",
-//   phoneNumber: "(123) 456-78910",
-//   zip: "12180",
-//   null: "other",
-// };
-const files: FilePaths = {
-  resumePath: "C:\\Users\\lordo\\Downloads\\Ariels Resume-1.pdf",
-  transcriptPath: "C:\\Users\\lordo\\Downloads\\Academic Transcript.pdf",
-  coverLetterPath: "null",
-}
-
 // A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
 function cleanUp(input: string): string {
   while (input[0] != ":") {
