@@ -42,10 +42,10 @@ function cleanUp(input: string): string {
 }
 
 function callCorrect(input: inputElements){
-  if (input.type == "file") {
+  /*if (input.type == "file") {
     fileFields(input)
-  }
-  else if (input.type == "basic") {
+  }*/
+  if (input.type == "basic") {
     normalFields(input)
   }
 }
@@ -162,7 +162,7 @@ async function normalFields(data: inputElements) {
   }
 }
 
-async function fileFields(data: inputElements) {
+/*async function fileFields(data: inputElements) {
   // get all inputElemets with a type of file
   for (let i of data.inputs) {
     let fieldInfo: FieldInfo = {
@@ -185,7 +185,7 @@ async function fileFields(data: inputElements) {
    i.files = dataTransfer.files;
    dataTransfer.items.clear();
   }
-}
+}*/
 
 // Uses AI to fill in dropdown fields. Dropdown fields are similar to input fields, but instead of an input, they have
 // a select element with a number of options. The options are treated similarly to an array
