@@ -105,8 +105,6 @@ What type of field is this?
 Use its information as well as the previous field's information to determine the type.
 The options are: basic, date, file, previousEmployment
 
-A field will only be a file if "type: file"
-
 input label: startDate
 name: startDate
 id: startDate
@@ -115,24 +113,6 @@ header: Employment
 
 input text:
 date
-
-input label: potition
-name: position
-id: pos1
-type: text
-header: Employment
-
-input text:
-previousEmployment
-
-input label: Address
-name: Address
-id: address
-type: text
-header: Personal
-
-input text:
-basic
 
 input label: {inputLabel}
 name: {name}
