@@ -7,49 +7,55 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 const openDB = (): Promise<IDBDatabase> => {
-    return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = window.indexedDB.open('FilesDB', 1);
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    const request = window.indexedDB.open('FilesDB', 1);
+
+    request.onerror = (event: Event) => {
+      reject('Error opening database');
+    };
+
+    request.onsuccess = (event: Event) => {
+      const target = event.target as IDBOpenDBRequest;
+      const db = target.result as IDBDatabase;
+      if (db) {
+        resolve(db);
+      } else {
+        reject('Failed to open database');
+      }
+    };
+
+    request.onupgradeneeded = (event: Event) => {
+      const target = event.target as IDBOpenDBRequest;
+      const db = target.result as IDBDatabase;
+      db.createObjectStore('files', { keyPath: 'id' });
+    };
+  });
+};
   
-      request.onerror = (event: Event) => {
-        reject('Error opening database');
-      };
-  
-      request.onsuccess = (event: Event) => {
-        const target = event.target as IDBOpenDBRequest;
-        const db = target.result as IDBDatabase;
-        if (db) {
-          resolve(db);
-        } else {
-          reject('Failed to open database');
-        }
-      };
-  
-      request.onupgradeneeded = (event: Event) => {
-        const target = event.target as IDBOpenDBRequest;
-        const db = target.result as IDBDatabase;
-        const objectStore = db.createObjectStore('files', { autoIncrement: true });
-        objectStore.createIndex('name', 'name', { unique: false });
-      };
-    });
-  };
-  
-  const saveFile = (file:File) => {
+  const saveFile = (file: File, key: string) => {
     return openDB().then((db) => {
       return new Promise((resolve, reject) => {
-        const transaction = db.transaction('files', 'readwrite');
-        const objectStore = transaction.objectStore('files');
-        const request = objectStore.add(file);
+        removeFile(key) // Remove existing file with the same key
+          .then(() => {
+            const transaction = db.transaction('files', 'readwrite');
+            const objectStore = transaction.objectStore('files');
+            const request = objectStore.add({ id: key, file });
   
-        request.onsuccess = () => {
-          resolve('File saved successfully');
-        };
+            request.onsuccess = () => {
+              resolve('File saved successfully');
+            };
   
-        request.onerror = () => {
-          reject('Error saving file');
-        };
+            request.onerror = () => {
+              reject('Error saving file');
+            };
+          })
+          .catch((error) => {
+            reject(error);
+          });
       });
     });
   };
+  
   
   const getAllFiles = () => {
     return openDB().then((db) => {
@@ -64,6 +70,25 @@ const openDB = (): Promise<IDBDatabase> => {
   
         request.onerror = () => {
           reject('Error getting files');
+        };
+      });
+    });
+  };
+
+
+  const removeFile = (fileKey: string) => {
+    return openDB().then((db) => {
+      return new Promise<string>((resolve, reject) => {
+        const transaction = db.transaction('files', 'readwrite');
+        const objectStore = transaction.objectStore('files');
+        const request = objectStore.delete(fileKey);
+  
+        request.onsuccess = () => {
+          resolve('File removed successfully');
+        };
+  
+        request.onerror = () => {
+          reject('Error removing file');
         };
       });
     });
@@ -196,15 +221,18 @@ function EasyAppOptions() {
     };
 
     const traverseFileInputs = () => {
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        console.log(fileInputs);
-        fileInputs.forEach((input) => {
-            if (input instanceof HTMLInputElement && input.files && input.files.length > 0) {
-                const file = input.files[0];
-                saveFile(file);
-            }
-
-        });
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      console.log(fileInputs);
+    
+      fileInputs.forEach((input) => {
+        if (input instanceof HTMLInputElement && input.files && input.files.length > 0) {
+          const file = input.files[0];
+          const key = input.name; // Assuming the input's name attribute is used as the key
+          saveFile(file, key)
+            .then((message) => console.log(message))
+            .catch((error) => console.error(error));
+        }
+      });
     };
       const handleRetrieveFiles = async () => {
         const files = await getAllFiles();
@@ -258,17 +286,17 @@ function EasyAppOptions() {
 
                 <Form.Group>
                     <Form.Label>Upload Resume:</Form.Label>
-                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="Resume" onChange={handleFileChange}/>
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="resume" onChange={handleFileChange}/>
                 </Form.Group>
 
                 <Form.Group>
                     <Form.Label>Upload Cover Letter:</Form.Label>
-                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="Cover Letter" onChange={handleFileChange}/>
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="coverletter" onChange={handleFileChange}/>
                 </Form.Group>
 
                 <Form.Group>
                     <Form.Label>Upload CV:</Form.Label>
-                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="CV" onChange={handleFileChange}/>
+                    <Form.Control type="file" accept=".pdf, .doc, .docx, .tex" name="cv" onChange={handleFileChange}/>
                 </Form.Group>
                 <Button onClick={handleRetrieveFiles}>Retrieve Files</Button>
                         <Container>
