@@ -1,15 +1,14 @@
-import { OpenAI } from "langchain/llms/openai";
-import { PromptTemplate } from "langchain/prompts";
-import { UserInfo, FieldInfo, FilePaths, JobInfo} from "./types";
-import { LLMChain } from "langchain/chains";
+import { OpenAI } from 'langchain/llms/openai';
+import { PromptTemplate } from 'langchain/prompts';
+import { UserInfo, FieldInfo, FilePaths, JobInfo } from './types';
+import { LLMChain } from 'langchain/chains';
 
-export const model = new OpenAI(
-  {openAIApiKey: process.env.OPENAI_API_KEY,
-    modelName: "gpt-3.5-turbo-instruct",
-    temperature: 0,
-    stop: ["\n, input label:"]
-  });
-
+export const model = new OpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY,
+  modelName: 'gpt-3.5-turbo-instruct',
+  temperature: 0,
+  stop: ['\n, input label:'],
+});
 
 const normPrompt = PromptTemplate.fromTemplate(`
 {userInfo}
@@ -123,19 +122,20 @@ header: {header}
 input text:
 `);
 
-export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, dropDown: string[] = [] ) => {
+export const answerField = async (
+  userInfo: UserInfo,
+  fieldInfo: FieldInfo,
+  dropDown: string[] = [],
+) => {
   if (dropDown.length > 0) {
-
     const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
     let result = await chain.call({
       userInfo: JSON.stringify(userInfo),
-      dropDown: dropDown.join("\n")
+      dropDown: dropDown.join('\n'),
     });
     console.log(result.text);
     return result.text as string;
-
   } else {
-
     const chain = new LLMChain({ llm: model, prompt: normPrompt });
     let result = await chain.call({
       userInfo: JSON.stringify(userInfo),
@@ -148,14 +148,14 @@ export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, drop
     });
 
     return result.text as string;
-
   }
-
-  
-}
+};
 
 // Speacial case for file inputs. The AI will return the file path of the file to upload
-export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => {
+export const answerFile = async (
+  filePaths: FilePaths,
+  fieldInfo: FieldInfo,
+) => {
   const chain = new LLMChain({ llm: model, prompt: filePrompt });
   let result = await chain.call({
     filePaths: JSON.stringify(filePaths),
@@ -164,10 +164,14 @@ export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => 
     id: fieldInfo.id,
     resumePath: filePaths.resumePath,
   });
- return result.text as string;
-}
+  return result.text as string;
+};
 
-export const answerDate = async (userJob: JobInfo, fieldInfo: FieldInfo, format: string) => {
+export const answerDate = async (
+  userJob: JobInfo,
+  fieldInfo: FieldInfo,
+  format: string,
+) => {
   const chain = new LLMChain({ llm: model, prompt: datePrompt });
   let result = await chain.call({
     userJobs: JSON.stringify(userJob),
@@ -177,7 +181,7 @@ export const answerDate = async (userJob: JobInfo, fieldInfo: FieldInfo, format:
     format: format,
   });
   return result.text as string;
-}
+};
 
 export const fieldType = async (fieldInfo: FieldInfo) => {
   const chain = new LLMChain({ llm: model, prompt: fieldTypePrompt });
@@ -189,4 +193,4 @@ export const fieldType = async (fieldInfo: FieldInfo) => {
     header: fieldInfo.header,
   });
   return result.text as string;
-}
+};
