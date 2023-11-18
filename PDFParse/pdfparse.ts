@@ -10,7 +10,7 @@ interface ParsedInfo {
 
 async function convertPdfToJson(): Promise<void> {
   try {
-    // Get PDF file path from user input
+    // CHANGE THIS LINE TO READ FROM THE DATABASE
     const pdfPath = readlineSync.question('Enter the path to the PDF file: ');
 
     // Check if the file exists
@@ -21,7 +21,7 @@ async function convertPdfToJson(): Promise<void> {
 
     // Read PDF file
     const dataBuffer = fs.readFileSync(pdfPath);
-
+9p
     // Parse PDF
     const data = await pdf(dataBuffer);
 
