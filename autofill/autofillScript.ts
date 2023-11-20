@@ -1,5 +1,5 @@
-import { answerCheckbox, answerDate, answerDropdown, answerField, answerFile, fieldType } from "./llm";
-import { FieldInfo, UserInfo, FilePaths, inputElements } from "./types";
+import { answerCheckbox, answerDate, answerDropdown, answerField, answerFile, fieldType } from './llm';
+import { FieldInfo, UserInfo, FilePaths, inputElements } from './types';
 
 
 let dates : inputElements[] = [];
@@ -38,7 +38,7 @@ const loadAllFormData = async () => {
   // Promise to handle asynchronous storage access
   let promise = new Promise((resolve, reject) => {
     // Retrieve all keys at once
-    chrome.storage.sync.get(null, function(items) {
+    chrome.storage.sync.get(null, function (items) {
       if (chrome.runtime.lastError) {
         // Handle errors here
         reject(chrome.runtime.lastError);
@@ -63,14 +63,14 @@ const loadAllFormData = async () => {
 
 /*// A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
 function cleanUp(input: string): string {
-  while (input[0] != ":") {
+  while (input[0] != ':') {
     input = input.slice(1);
   }
   input = input.slice(1);
   return input;
 }*/
 
-function callCorrect(input: inputElements){
+function callCorrect(input: inputElements) {
   /*if (input.type == "file") {
     fileFields(input)
   }*/
@@ -88,20 +88,20 @@ function callCorrect(input: inputElements){
 
 
 async function getElements() {
-  let data : inputElements[] = [];
-  let inputs : HTMLInputElement[] = []
-  let stack : Element[] = [document.body]; // Use a stack for DFS
+  let data: inputElements[] = [];
+  let inputs: HTMLInputElement[] = [];
+  let stack: Element[] = [document.body]; // Use a stack for DFS
   let isLabelFound = false;
-  let visited : Set<Element> = new Set();
+  let visited: Set<Element> = new Set();
   let currentLabel: HTMLLabelElement | null = null;
-  let currHeader: string = "";
+  let currHeader: string = '';
 
   // go through html using DFS
   while (stack.length > 0) {
     let current = stack.pop(); // Pop a node from the stack
 
     if (current instanceof HTMLHeadingElement) {
-      currHeader = current.textContent || "";
+      currHeader = current.textContent || '';
     }
 
     if (!current || visited.has(current)) continue;
@@ -132,22 +132,27 @@ async function getElements() {
 
   // Add the inputs found after the last label
   if (isLabelFound && currentLabel && inputs.length > 0) {
-    let fieldInfo : FieldInfo = {
-      inputLabel: currentLabel.textContent || "",
-      name: inputs[0].name || "",
-      id: inputs[0].id || "",
-      placeholder: inputs[0].placeholder || "",
+    let fieldInfo: FieldInfo = {
+      inputLabel: currentLabel.textContent || '',
+      name: inputs[0].name || '',
+      id: inputs[0].id || '',
+      placeholder: inputs[0].placeholder || '',
       type: inputs[0].type || null,
       header: currHeader,
     };
 
-    let prev
-    if (data.length > 1) prev = data[data.length - 1].label.textContent || "";
-    else  prev = "";
+    let prev;
+    if (data.length > 1) prev = data[data.length - 1].label.textContent || '';
+    else prev = '';
 
     let type = await fieldType(fieldInfo);
 
-    data.push({label: currentLabel, inputs: inputs, type: type, header: currHeader});
+    data.push({
+      label: currentLabel,
+      inputs: inputs,
+      type: type,
+      header: currHeader,
+    });
   }
 
   for (let i of data){
@@ -157,7 +162,6 @@ async function getElements() {
   }
 
   return data;
-  
 }
       
 
@@ -176,7 +180,7 @@ async function checkboxes(input: inputElements){
 // Uses AI to fill in standard text fields.
 // Standard text fields assume that both the input field and label are wrapped exclusively in a div.
 async function normalFields(data: inputElements) {
-  const user = await loadAllFormData() as UserInfo;
+  const user = (await loadAllFormData()) as UserInfo;
   // for each input element get the label and input
   let j = 0;
   for (let i of data.inputs) {
@@ -234,14 +238,13 @@ async function normalFields(data: inputElements) {
 // a select element with a number of options. The options are treated similarly to an array
 // This array is passed to the AI which then chooses the best response.
 async function dropdownFields() {
+  const user = (await loadAllFormData()) as UserInfo;
 
-  const user = await loadAllFormData() as UserInfo;
-  
   // get dropdowns from page using jquery
-  let dropdowns = document.querySelectorAll("select");
+  let dropdowns = document.querySelectorAll('select');
   // for each dropdown get the option value field as an array
   for (let i of dropdowns) {
-    let options = i.querySelectorAll("option");
+    let options = i.querySelectorAll('option');
 
     //covert options to array. Potentially may need to be changed to a Map to account for ambiguous labeling
     let dropdownOptions: string[] = [];
@@ -283,4 +286,3 @@ dropdownFields()
 
 
 export {};
-

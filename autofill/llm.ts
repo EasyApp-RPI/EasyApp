@@ -10,13 +10,12 @@ Spearhead development of an AI powered text generative backend designed to autom
 Develop a connected frontend in the form of a Google Chrome and Firefox extension for ease of use`;
 
 
-export const model = new OpenAI(
-  {openAIApiKey: process.env.OPENAI_API_KEY,
-    modelName: "gpt-3.5-turbo-instruct",
-    temperature: 0,
-    stop: ["\n, input label:"]
-  });
-
+export const model = new OpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY,
+  modelName: 'gpt-3.5-turbo-instruct',
+  temperature: 0,
+  stop: ['\n, input label:'],
+});
 
 const normPrompt = PromptTemplate.fromTemplate(`
 {userInfo}
@@ -134,7 +133,6 @@ export const answerField = async (userInfo: UserInfo, fieldData: inputElements) 
     });
 
     return result.text as string;
-
   }
 
   export const answerCheckbox = async (userInfo: UserInfo, fieldData: inputElements) => {
@@ -161,7 +159,10 @@ export const answerDropdown = async (userInfo: UserInfo, dropDown: string[]) => 
 }
 
 // Speacial case for file inputs. The AI will return the file path of the file to upload
-export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => {
+export const answerFile = async (
+  filePaths: FilePaths,
+  fieldInfo: FieldInfo,
+) => {
   const chain = new LLMChain({ llm: model, prompt: filePrompt });
   let result = await chain.call({
     filePaths: JSON.stringify(filePaths),
@@ -170,8 +171,8 @@ export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => 
     id: fieldInfo.id,
     resumePath: filePaths.resumePath,
   });
- return result.text as string;
-}
+  return result.text as string;
+};
 
 export const answerDate = async (date: inputElements) => {
   const chain = new LLMChain({ llm: model, prompt: datePrompt });
@@ -180,7 +181,7 @@ export const answerDate = async (date: inputElements) => {
     date: JSON.stringify(date),
   });
   return result.text as string;
-}
+};
 
 export const fieldType = async (fieldInfo: FieldInfo) => {
   const chain = new LLMChain({ llm: model, prompt: fieldTypePrompt });
@@ -192,4 +193,4 @@ export const fieldType = async (fieldInfo: FieldInfo) => {
     header: fieldInfo.header,
   });
   return result.text as string;
-}
+};
