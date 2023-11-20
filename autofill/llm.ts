@@ -1,7 +1,14 @@
 import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
-import { UserInfo, FieldInfo, FilePaths, JobInfo} from "./types";
+import { UserInfo, FieldInfo, FilePaths, JobInfo, inputElements} from "./types";
 import { LLMChain } from "langchain/chains";
+
+let userJob = `Developer - EasyApp Aug. 2023 – Present
+Rensselaer Center for Open Source Troy, NY
+Reduce job application time to mere minutes, providing an increase in speed of nearly 1000% over non-AI assisted capabilities on average
+Spearhead development of an AI powered text generative backend designed to automatically adapt to and fill out various online job applications
+Develop a connected frontend in the form of a Google Chrome and Firefox extension for ease of use`;
+
 
 export const model = new OpenAI(
   {openAIApiKey: process.env.OPENAI_API_KEY,
@@ -16,24 +23,15 @@ const normPrompt = PromptTemplate.fromTemplate(`
 
 Given this user information, respond to the input field label and name
 
-input label: First Name
-name: FirstName
-id: first-name
-placeholder: Enter First Name
+field data: <input aria-describedby="firstNameDescription" ng-required="true" title="First Name" ng-if="!form.fieldAddonLeft &amp;&amp; !form.fieldAddonRight" ng-show="form.key" type="text" step="any" sf-changed="form" autocomplete="on" placeholder="Input text" class="form-control  ng-touched ng-dirty ng-valid-parse ng-empty ng-invalid ng-invalid-tv4-302 ng-invalid-required ng-invalid-schema-form" id="firstName" ng-model-options="form.ngModelOptions" ng-model="model['firstName']" ng-disabled="form.readonly" schema-validate="form" name="firstName" required="required">
 
 input text: {firstName}
 
-input label: null
-name: phoneNumber
-id: null
-placeholder: Enter your mobile number here
+field data: <input aria-describedby="unameDescription" ng-required="true" title="Primary Email" ng-if="!form.fieldAddonLeft &amp;&amp; !form.fieldAddonRight" ng-show="form.key" type="text" step="any" sf-changed="form" autocomplete="on" placeholder="Input text" class="form-control  ng-empty ng-invalid ng-invalid-required ng-valid-invalid-email ng-invalid-schema-form" id="uname" ng-model-options="form.ngModelOptions" ng-model="model['uname']" ng-disabled="form.readonly" schema-validate="form" name="uname" required="required">
 
-input text: {phoneNumber}
+input text: {email}
 
-input label: {inputLabel}
-name: {name}
-id: {id}
-placeholder: {placeholder}
+field data: {fieldData}
 
 input text:
 `);
@@ -41,14 +39,14 @@ input text:
 const dropdownPrompt = PromptTemplate.fromTemplate(`
 {userInfo}
 
-Given this user information, respond to the drop down field with the best out of the given options
+Given this user information, respond to the drop down field with the best out of the given options. Do not modify the options.
 
 dropDownOptions: 
-male
+string::male
 female
 other
 
-input text: male
+input text: string::male
 
 dropDownOptions: {dropDown}
 
@@ -76,33 +74,22 @@ input text:
 const datePrompt = PromptTemplate.fromTemplate(`
 {userJobs}
 
-Using the user's job information, respond to the input field info in the format of {format}
-If the user is missing the day in the date, respond with the first day of the month
+Start Date: March 1 2022
+End Date: August 1 2022
 
-input label: startDate
-name: startDate
-id: startDate
+Choose the best date for the following input in the format the date field expects. If no format can be found assum the format is YYYY-MM-DD
 
-input text:
-{startDate}
+date: <input name="startDate" type="date" class="form-control" value="">
+input: 2022-03-01
 
-input label: endDate
-name: endDate
-id: endDate
 
-input text:
-{endDate}
-
-input label: {inputLabel}
-name: {name}
-id: {id}
-
-input text:
+date: {date}
+input:
 `);
 
 const fieldTypePrompt = PromptTemplate.fromTemplate(`
-What type of field is this? 
-Use its information as well as the previous field's information to determine the type.
+What kind of field is this? 
+Use its information as well as the previous field's information to determine the kind.
 The options are: basic, date, file, previousEmployment
 
 input label: startDate
@@ -123,35 +110,54 @@ header: {header}
 input text:
 `);
 
-export const answerField = async (userInfo: UserInfo, fieldInfo: FieldInfo, dropDown: string[] = [] ) => {
-  if (dropDown.length > 0) {
+const checkboxesPrompt = PromptTemplate.fromTemplate(`
+{userInfo}
+Based on the user information, should the checkbox be checked or unchecked?
 
-    const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
-    let result = await chain.call({
-      userInfo: JSON.stringify(userInfo),
-      dropDown: dropDown.join("\n")
-    });
-    console.log(result.text);
-    return result.text as string;
+input label: "I am a verteran"
 
-  } else {
+input text: unchecked
+
+input label {inputLabel}
+
+input text:
+`);
+
+export const answerField = async (userInfo: UserInfo, fieldData: inputElements) => {
 
     const chain = new LLMChain({ llm: model, prompt: normPrompt });
     let result = await chain.call({
       userInfo: JSON.stringify(userInfo),
       firstName: userInfo.firstName,
-      phoneNumber: userInfo.phoneNumber,
-      inputLabel: fieldInfo.inputLabel,
-      name: fieldInfo.name,
-      id: fieldInfo.id,
-      placeholder: fieldInfo.placeholder,
+      email: userInfo.email,
+      fieldData: fieldData.inputs[0].outerHTML,
     });
 
     return result.text as string;
 
   }
 
+  export const answerCheckbox = async (userInfo: UserInfo, fieldData: inputElements) => {
+      
+      const chain = new LLMChain({ llm: model, prompt: checkboxesPrompt });
+      let result = await chain.call({
+        userInfo: JSON.stringify(userInfo),
+        inputLabel: fieldData.label.textContent,
+      });
   
+      return result.text as string;
+  
+    }
+  
+
+export const answerDropdown = async (userInfo: UserInfo, dropDown: string[]) => {
+  const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
+  let result = await chain.call({
+    userInfo: JSON.stringify(userInfo),
+    dropDown: dropDown.join("\n")
+  });
+  console.log(result.text);
+  return result.text as string;
 }
 
 // Speacial case for file inputs. The AI will return the file path of the file to upload
@@ -167,14 +173,11 @@ export const answerFile = async (filePaths: FilePaths, fieldInfo: FieldInfo) => 
  return result.text as string;
 }
 
-export const answerDate = async (userJob: JobInfo, fieldInfo: FieldInfo, format: string) => {
+export const answerDate = async (date: inputElements) => {
   const chain = new LLMChain({ llm: model, prompt: datePrompt });
   let result = await chain.call({
-    userJobs: JSON.stringify(userJob),
-    inputLabel: fieldInfo.inputLabel,
-    name: fieldInfo.name,
-    id: fieldInfo.id,
-    format: format,
+    userJobs: userJob,
+    date: JSON.stringify(date),
   });
   return result.text as string;
 }

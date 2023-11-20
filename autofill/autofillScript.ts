@@ -1,5 +1,34 @@
-import { answerField, answerFile, fieldType } from "./llm";
+import { answerCheckbox, answerDate, answerDropdown, answerField, answerFile, fieldType } from "./llm";
 import { FieldInfo, UserInfo, FilePaths, inputElements } from "./types";
+
+
+let dates : inputElements[] = [];
+
+async function simulateUserInput(inputElement : HTMLInputElement | HTMLSelectElement, value: string, i = 0) {
+  // Set the value of the input field
+  inputElement.value = value;
+
+  let eventType: string = '';
+  if (inputElement instanceof HTMLSelectElement) {
+      eventType = 'change';
+
+  } else if (inputElement instanceof HTMLInputElement) {
+      eventType = 'input';
+  }
+  // Create a new event for the 'input' event type
+  const event = new Event(eventType, {
+  });
+
+  // Dispatch the 'input' event
+  inputElement.dispatchEvent(event);
+  // wait 1 second for the dropdown to update
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  // make sure the value was set correctly
+  while (inputElement.value != value && i < 5){
+    simulateUserInput(inputElement, value, i + 1);
+  }
+}
+
 
 // Helper function to load all data from chrome storage
 const loadAllFormData = async () => {
@@ -32,21 +61,28 @@ const loadAllFormData = async () => {
   }
 };
 
-// A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
+/*// A simple function to clean up the response from the AI. The AI will often return a string containing "AI: " at the beginning
 function cleanUp(input: string): string {
   while (input[0] != ":") {
     input = input.slice(1);
   }
   input = input.slice(1);
   return input;
-}
+}*/
 
 function callCorrect(input: inputElements){
   /*if (input.type == "file") {
     fileFields(input)
   }*/
-  if (input.type == "basic") {
+  if (input.type == "text") {
     normalFields(input)
+  }
+  if (input.type == "date"){
+    dates.push(input)
+  }
+  if (input.type == "checkbox"){
+    checkboxes(input)
+    //normalFields(input)
   }
 }
 
@@ -60,7 +96,7 @@ async function getElements() {
   let currentLabel: HTMLLabelElement | null = null;
   let currHeader: string = "";
 
-  // go through html object by object and get all labels and inputs
+  // go through html using DFS
   while (stack.length > 0) {
     let current = stack.pop(); // Pop a node from the stack
 
@@ -73,19 +109,11 @@ async function getElements() {
 
     if (current instanceof HTMLLabelElement) {
       if (isLabelFound && currentLabel && inputs.length > 0){
-        let fieldInfo : FieldInfo = {
-          inputLabel: currentLabel.textContent || "",
-          name: inputs[0].name || "",
-          id: inputs[0].id || "",
-          placeholder: inputs[0].placeholder || "",
-          type: inputs[0].type || null,
-          header: currHeader,
-        };
         let prev
         if (data.length > 1) prev = data[data.length - 1].label.textContent || "";
         else  prev = "";
-        let type = await fieldType(fieldInfo);
-        data.push({label: currentLabel, inputs: inputs, type: type, header: currHeader});
+        //let type = await fieldType(fieldInfo);
+        data.push({label: currentLabel, inputs: inputs, type: inputs[0].type, header: currHeader});
         callCorrect(data[data.length - 1]);
         inputs = [];
       }
@@ -123,9 +151,9 @@ async function getElements() {
   }
 
   for (let i of data){
-    console.log("Label: \n" + i.label.textContent);
-    console.log("Inputs:" + i.inputs.length);
-    console.log("Type: " + i.type);
+    //console.log("Label: \n" + i.label.textContent);
+    //console.log("Inputs:" + i.inputs.length);
+    //console.log("Type: " + i.type);
   }
 
   return data;
@@ -135,6 +163,14 @@ async function getElements() {
 
 
 
+async function checkboxes(input: inputElements){
+  const user = await loadAllFormData() as UserInfo;
+  let response = await answerCheckbox(user, input);
+  console.log(response);
+  if (response == "checked"){
+    input.inputs[0].checked = true;
+  }
+}
 
 
 // Uses AI to fill in standard text fields.
@@ -144,20 +180,27 @@ async function normalFields(data: inputElements) {
   // for each input element get the label and input
   let j = 0;
   for (let i of data.inputs) {
-    let fieldInfo: FieldInfo = {
+    /*let fieldInfo: FieldInfo = {
       inputLabel: data.label.textContent || "",
       name: data.inputs[0].name + j.toString || "",
       id: data.inputs[0].id || "",
       placeholder: data.inputs[0].placeholder || "",
       type: data.inputs[0].type || null,
       header: data.header,
-    };
+    };*/
 
     // get ai response
-    let response = await answerField(user, fieldInfo);
+    let response = await answerField(user, data);
+    console.log(response);
     // set input value to response
-    console.log("result (normal): " + response);
-    if (response.trim() != "null") i.value = response.trim();
+    //console.log("result (normal): " + response);
+    if (response.trim() != "null"){
+
+    // if field is not hidden, set the value
+    if (data.inputs[0].type != "hidden") {
+        simulateUserInput(data.inputs[0], response.trim());
+    }
+    }
     j++;
   }
 }
@@ -206,28 +249,38 @@ async function dropdownFields() {
       let option = j as HTMLOptionElement;
       dropdownOptions.push(option.value);
     }
-    console.log(dropdownOptions);
-    let fieldInfo: FieldInfo = {
-      inputLabel: i.ariaLabel || "",
-      id: i.id || "",
-      name: "",
-      placeholder: dropdownOptions[0] || "",
-      type: i.type || null,
-      header: "",
-  
-    };
-
+    //console.log(dropdownOptions);
     // get ai response
-    let response = await answerField(user, fieldInfo, dropdownOptions);
+    let response = await answerDropdown(user, dropdownOptions);
     // set dropdown value to response
     console.log("result (dropdown): " + response);
-      if (response.trim() != "null") (i as HTMLSelectElement).value = response.trim();
+      if (response.trim() != "null") simulateUserInput(i, response.trim());
   }
 }
 
+function answerDates(){
+  for (let i of dates){
+  let result = answerDate(i);
+  result.then((res) => {
+    console.log(res);
+    i.inputs[0].value = res.trim();
+    dates.shift();
+  });
+}
+}
 
-getElements()
+
+
+
+let data = getElements().then((res) => {
+  //answerDates();
+  console.log(dates);
+  for (let i of res){
+    console.log("Label: \n" + i.label.textContent, "Inputs:" + i.inputs.length, "Type: " + i.type);
+  }
+});
 dropdownFields()
+
 
 export {};
 
