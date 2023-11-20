@@ -6,27 +6,25 @@ let dates : inputElements[] = [];
 
 async function simulateUserInput(inputElement : HTMLInputElement | HTMLSelectElement, value: string, i = 0) {
   // Set the value of the input field
+  
   inputElement.value = value;
 
   let eventType: string = '';
   if (inputElement instanceof HTMLSelectElement) {
       eventType = 'change';
+      
 
   } else if (inputElement instanceof HTMLInputElement) {
       eventType = 'input';
+      
   }
   // Create a new event for the 'input' event type
   const event = new Event(eventType, {
+    // change the drop down value
   });
 
   // Dispatch the 'input' event
   inputElement.dispatchEvent(event);
-  // wait 1 second for the dropdown to update
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  // make sure the value was set correctly
-  while (inputElement.value != value && i < 5){
-    simulateUserInput(inputElement, value, i + 1);
-  }
 }
 
 
@@ -234,12 +232,14 @@ async function normalFields(data: inputElements) {
   }
 }*/
 
+
 // Uses AI to fill in dropdown fields. Dropdown fields are similar to input fields, but instead of an input, they have
 // a select element with a number of options. The options are treated similarly to an array
 // This array is passed to the AI which then chooses the best response.
 async function dropdownFields() {
   const user = (await loadAllFormData()) as UserInfo;
-
+  //wait for 3 seconds
+  await new Promise(r => setTimeout(r, 5000));
   // get dropdowns from page using jquery
   let dropdowns = document.querySelectorAll('select');
   // for each dropdown get the option value field as an array
@@ -271,7 +271,6 @@ function answerDates(){
   });
 }
 }
-
 
 
 
