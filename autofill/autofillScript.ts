@@ -1,34 +1,41 @@
-import { answerCheckbox, answerDate, answerDropdown, answerField, answerFile, fieldType } from './llm';
+import {
+  answerCheckbox,
+  answerDate,
+  answerDropdown,
+  answerField,
+  answerFile,
+  fieldType,
+} from './llm';
 import { FieldInfo, UserInfo, FilePaths, inputElements } from './types';
 
+let dates: inputElements[] = [];
 
-let dates : inputElements[] = [];
-
-async function simulateUserInput(inputElement : HTMLInputElement | HTMLSelectElement, value: string, i = 0) {
+async function simulateUserInput(
+  inputElement: HTMLInputElement | HTMLSelectElement,
+  value: string,
+  i = 0,
+) {
   // Set the value of the input field
   inputElement.value = value;
 
   let eventType: string = '';
   if (inputElement instanceof HTMLSelectElement) {
-      eventType = 'change';
-
+    eventType = 'change';
   } else if (inputElement instanceof HTMLInputElement) {
-      eventType = 'input';
+    eventType = 'input';
   }
   // Create a new event for the 'input' event type
-  const event = new Event(eventType, {
-  });
+  const event = new Event(eventType, {});
 
   // Dispatch the 'input' event
   inputElement.dispatchEvent(event);
   // wait 1 second for the dropdown to update
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   // make sure the value was set correctly
-  while (inputElement.value != value && i < 5){
+  while (inputElement.value != value && i < 5) {
     simulateUserInput(inputElement, value, i + 1);
   }
 }
-
 
 // Helper function to load all data from chrome storage
 const loadAllFormData = async () => {
@@ -74,18 +81,17 @@ function callCorrect(input: inputElements) {
   /*if (input.type == "file") {
     fileFields(input)
   }*/
-  if (input.type == "text") {
-    normalFields(input)
+  if (input.type == 'text') {
+    normalFields(input);
   }
-  if (input.type == "date"){
-    dates.push(input)
+  if (input.type == 'date') {
+    dates.push(input);
   }
-  if (input.type == "checkbox"){
-    checkboxes(input)
+  if (input.type == 'checkbox') {
+    checkboxes(input);
     //normalFields(input)
   }
 }
-
 
 async function getElements() {
   let data: inputElements[] = [];
@@ -108,12 +114,18 @@ async function getElements() {
     visited.add(current);
 
     if (current instanceof HTMLLabelElement) {
-      if (isLabelFound && currentLabel && inputs.length > 0){
-        let prev
-        if (data.length > 1) prev = data[data.length - 1].label.textContent || "";
-        else  prev = "";
+      if (isLabelFound && currentLabel && inputs.length > 0) {
+        let prev;
+        if (data.length > 1)
+          prev = data[data.length - 1].label.textContent || '';
+        else prev = '';
         //let type = await fieldType(fieldInfo);
-        data.push({label: currentLabel, inputs: inputs, type: inputs[0].type, header: currHeader});
+        data.push({
+          label: currentLabel,
+          inputs: inputs,
+          type: inputs[0].type,
+          header: currHeader,
+        });
         callCorrect(data[data.length - 1]);
         inputs = [];
       }
@@ -155,7 +167,7 @@ async function getElements() {
     });
   }
 
-  for (let i of data){
+  for (let i of data) {
     //console.log("Label: \n" + i.label.textContent);
     //console.log("Inputs:" + i.inputs.length);
     //console.log("Type: " + i.type);
@@ -163,19 +175,15 @@ async function getElements() {
 
   return data;
 }
-      
 
-
-
-async function checkboxes(input: inputElements){
-  const user = await loadAllFormData() as UserInfo;
+async function checkboxes(input: inputElements) {
+  const user = (await loadAllFormData()) as UserInfo;
   let response = await answerCheckbox(user, input);
   console.log(response);
-  if (response == "checked"){
+  if (response == 'checked') {
     input.inputs[0].checked = true;
   }
 }
-
 
 // Uses AI to fill in standard text fields.
 // Standard text fields assume that both the input field and label are wrapped exclusively in a div.
@@ -198,12 +206,11 @@ async function normalFields(data: inputElements) {
     console.log(response);
     // set input value to response
     //console.log("result (normal): " + response);
-    if (response.trim() != "null"){
-
-    // if field is not hidden, set the value
-    if (data.inputs[0].type != "hidden") {
+    if (response.trim() != 'null') {
+      // if field is not hidden, set the value
+      if (data.inputs[0].type != 'hidden') {
         simulateUserInput(data.inputs[0], response.trim());
-    }
+      }
     }
     j++;
   }
@@ -256,33 +263,33 @@ async function dropdownFields() {
     // get ai response
     let response = await answerDropdown(user, dropdownOptions);
     // set dropdown value to response
-    console.log("result (dropdown): " + response);
-      if (response.trim() != "null") simulateUserInput(i, response.trim());
+    console.log('result (dropdown): ' + response);
+    if (response.trim() != 'null') simulateUserInput(i, response.trim());
   }
 }
 
-function answerDates(){
-  for (let i of dates){
-  let result = answerDate(i);
-  result.then((res) => {
-    console.log(res);
-    i.inputs[0].value = res.trim();
-    dates.shift();
-  });
+function answerDates() {
+  for (let i of dates) {
+    let result = answerDate(i);
+    result.then((res) => {
+      console.log(res);
+      i.inputs[0].value = res.trim();
+      dates.shift();
+    });
+  }
 }
-}
-
-
-
 
 let data = getElements().then((res) => {
   //answerDates();
   console.log(dates);
-  for (let i of res){
-    console.log("Label: \n" + i.label.textContent, "Inputs:" + i.inputs.length, "Type: " + i.type);
+  for (let i of res) {
+    console.log(
+      'Label: \n' + i.label.textContent,
+      'Inputs:' + i.inputs.length,
+      'Type: ' + i.type,
+    );
   }
 });
-dropdownFields()
-
+dropdownFields();
 
 export {};
