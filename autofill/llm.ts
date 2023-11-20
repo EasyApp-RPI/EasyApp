@@ -1,14 +1,19 @@
-import { OpenAI } from "langchain/llms/openai";
-import { PromptTemplate } from "langchain/prompts";
-import { UserInfo, FieldInfo, FilePaths, JobInfo, inputElements} from "./types";
-import { LLMChain } from "langchain/chains";
+import { OpenAI } from 'langchain/llms/openai';
+import { PromptTemplate } from 'langchain/prompts';
+import {
+  UserInfo,
+  FieldInfo,
+  FilePaths,
+  JobInfo,
+  inputElements,
+} from './types';
+import { LLMChain } from 'langchain/chains';
 
 let userJob = `Developer - EasyApp Aug. 2023 – Present
 Rensselaer Center for Open Source Troy, NY
 Reduce job application time to mere minutes, providing an increase in speed of nearly 1000% over non-AI assisted capabilities on average
 Spearhead development of an AI powered text generative backend designed to automatically adapt to and fill out various online job applications
 Develop a connected frontend in the form of a Google Chrome and Firefox extension for ease of use`;
-
 
 export const model = new OpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
@@ -122,41 +127,46 @@ input label {inputLabel}
 input text:
 `);
 
-export const answerField = async (userInfo: UserInfo, fieldData: inputElements) => {
+export const answerField = async (
+  userInfo: UserInfo,
+  fieldData: inputElements,
+) => {
+  const chain = new LLMChain({ llm: model, prompt: normPrompt });
+  let result = await chain.call({
+    userInfo: JSON.stringify(userInfo),
+    firstName: userInfo.firstName,
+    email: userInfo.email,
+    fieldData: fieldData.inputs[0].outerHTML,
+  });
 
-    const chain = new LLMChain({ llm: model, prompt: normPrompt });
-    let result = await chain.call({
-      userInfo: JSON.stringify(userInfo),
-      firstName: userInfo.firstName,
-      email: userInfo.email,
-      fieldData: fieldData.inputs[0].outerHTML,
-    });
+  return result.text as string;
+};
 
-    return result.text as string;
-  }
+export const answerCheckbox = async (
+  userInfo: UserInfo,
+  fieldData: inputElements,
+) => {
+  const chain = new LLMChain({ llm: model, prompt: checkboxesPrompt });
+  let result = await chain.call({
+    userInfo: JSON.stringify(userInfo),
+    inputLabel: fieldData.label.textContent,
+  });
 
-  export const answerCheckbox = async (userInfo: UserInfo, fieldData: inputElements) => {
-      
-      const chain = new LLMChain({ llm: model, prompt: checkboxesPrompt });
-      let result = await chain.call({
-        userInfo: JSON.stringify(userInfo),
-        inputLabel: fieldData.label.textContent,
-      });
-  
-      return result.text as string;
-  
-    }
-  
+  return result.text as string;
+};
 
-export const answerDropdown = async (userInfo: UserInfo, dropDown: string[]) => {
+export const answerDropdown = async (
+  userInfo: UserInfo,
+  dropDown: string[],
+) => {
   const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
   let result = await chain.call({
     userInfo: JSON.stringify(userInfo),
-    dropDown: dropDown.join("\n")
+    dropDown: dropDown.join('\n'),
   });
   console.log(result.text);
   return result.text as string;
-}
+};
 
 // Speacial case for file inputs. The AI will return the file path of the file to upload
 export const answerFile = async (
