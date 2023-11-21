@@ -81,7 +81,7 @@ function callCorrect(input: inputElements) {
   /*if (input.type == "file") {
     fileFields(input)
   }*/
-  if (input.type == 'text') {
+  if (input.type == 'text' || input.type == 'email' || input.type == 'tel') {
     normalFields(input);
   }
   if (input.type == 'date') {
