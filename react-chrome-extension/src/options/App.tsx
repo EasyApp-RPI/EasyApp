@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 function EasyAppOptions() {
   // Sets initial state of form fields
   const [FormData, setFormData] = useState([
+    { key: 'apikey', value: '', label: 'OpenAI API Key', type: 'input' },
     { key: 'firstName', value: '', label: 'First Name', type: 'input' },
     { key: 'lastName', value: '', label: 'Last Name', type: 'input' },
     { key: 'email', value: '', label: 'Email', type: 'input' },

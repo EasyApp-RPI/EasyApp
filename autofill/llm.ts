@@ -8,6 +8,7 @@ import {
   inputElements,
 } from './types';
 import { LLMChain } from 'langchain/chains';
+import { loadAllFormData } from './autofillScript';
 
 let userJob = `Developer - EasyApp Aug. 2023 – Present
 Rensselaer Center for Open Source Troy, NY
@@ -15,12 +16,22 @@ Reduce job application time to mere minutes, providing an increase in speed of n
 Spearhead development of an AI powered text generative backend designed to automatically adapt to and fill out various online job applications
 Develop a connected frontend in the form of a Google Chrome and Firefox extension for ease of use`;
 
-export const model = new OpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY,
-  modelName: 'gpt-3.5-turbo-instruct',
-  temperature: 0,
-  stop: ['\n, input label:'],
-});
+async function initializeModel() {
+
+  const user = (await loadAllFormData()) as UserInfo;
+
+  return new OpenAI({
+    openAIApiKey: user["apikey"],
+    modelName: 'gpt-3.5-turbo-instruct',
+    temperature: 0,
+    stop: ['\n, input label:'],
+  });
+}
+
+let model = initializeModel();
+
+// Call the async function to initialize the model
+export const modelPromise = initializeModel();
 
 const normPrompt = PromptTemplate.fromTemplate(`
 {userInfo}
@@ -131,7 +142,7 @@ export const answerField = async (
   userInfo: UserInfo,
   fieldData: inputElements,
 ) => {
-  const chain = new LLMChain({ llm: model, prompt: normPrompt });
+  const chain = new LLMChain({ llm: await model, prompt: normPrompt });
   let result = await chain.call({
     userInfo: JSON.stringify(userInfo),
     firstName: userInfo.firstName,
@@ -146,7 +157,7 @@ export const answerCheckbox = async (
   userInfo: UserInfo,
   fieldData: inputElements,
 ) => {
-  const chain = new LLMChain({ llm: model, prompt: checkboxesPrompt });
+  const chain = new LLMChain({ llm: await model, prompt: checkboxesPrompt });
   let result = await chain.call({
     userInfo: JSON.stringify(userInfo),
     inputLabel: fieldData.label.textContent,
@@ -159,7 +170,7 @@ export const answerDropdown = async (
   userInfo: UserInfo,
   dropDown: string[],
 ) => {
-  const chain = new LLMChain({ llm: model, prompt: dropdownPrompt });
+  const chain = new LLMChain({ llm: await model, prompt: dropdownPrompt });
   let result = await chain.call({
     userInfo: JSON.stringify(userInfo),
     dropDown: dropDown.join('\n'),
@@ -173,7 +184,7 @@ export const answerFile = async (
   filePaths: FilePaths,
   fieldInfo: FieldInfo,
 ) => {
-  const chain = new LLMChain({ llm: model, prompt: filePrompt });
+  const chain = new LLMChain({ llm: await model, prompt: filePrompt });
   let result = await chain.call({
     filePaths: JSON.stringify(filePaths),
     inputLabel: fieldInfo.inputLabel,
@@ -185,7 +196,7 @@ export const answerFile = async (
 };
 
 export const answerDate = async (date: inputElements) => {
-  const chain = new LLMChain({ llm: model, prompt: datePrompt });
+  const chain = new LLMChain({ llm: await model, prompt: datePrompt });
   let result = await chain.call({
     userJobs: userJob,
     date: JSON.stringify(date),
@@ -194,7 +205,7 @@ export const answerDate = async (date: inputElements) => {
 };
 
 export const fieldType = async (fieldInfo: FieldInfo) => {
-  const chain = new LLMChain({ llm: model, prompt: fieldTypePrompt });
+  const chain = new LLMChain({ llm: await model, prompt: fieldTypePrompt });
   let result = await chain.call({
     inputLabel: fieldInfo.inputLabel,
     name: fieldInfo.name,

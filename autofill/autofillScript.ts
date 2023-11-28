@@ -9,7 +9,7 @@ import {
 import { FieldInfo, UserInfo, FilePaths, inputElements } from './types';
 
 let dates: inputElements[] = [];
-
+console.log("autofilling");
 async function simulateUserInput(
   inputElement: HTMLInputElement | HTMLSelectElement,
   value: string,
@@ -35,7 +35,8 @@ async function simulateUserInput(
 }
 
 // Helper function to load all data from chrome storage
-const loadAllFormData = async () => {
+export const loadAllFormData = async () => {
+  console.log("loading data");
   // Create an object to hold the form data
   let formDataObject: any = {};
 
