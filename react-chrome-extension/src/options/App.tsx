@@ -6,6 +6,8 @@ import { useEffect, useState, ChangeEvent } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import EducationComp from './EducationComp';
+
 // openDB function returns a Promise that resolves to an IndexedDB database instance
 const openDB = (): Promise<IDBDatabase> => {
   // Return a Promise that wraps the logic for opening or upgrading the IndexedDB database
@@ -181,14 +183,6 @@ function EasyAppOptions() {
     },
 
     // Education box
-    { key: 'edu_name', value: '', label: 'School Name', type: 'input' },
-    { key: 'edu_degree', value: '', label: 'Degree', type: 'dropdown' },
-    { key: 'edu_major', value: '', label: 'Major', type: 'input' },
-    { key: 'edu_location', value: '', label: 'Location', type: 'input' },
-    { key: 'edu_gpa', value: '', label: 'GPA', type: 'input' },
-    { key: 'edu_from', value: '', label: 'From', type: 'input' },
-    { key: 'edu_to', value: '', label: 'To', type: 'input' },
-    { key: 'edu_current', value: '', label: 'Enrolling', type: 'checkbox' },
 
     // Interests box
     { key: 'interest_1', value: '', label: 'Interest 1', type: 'textarea' },
