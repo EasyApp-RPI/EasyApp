@@ -12,9 +12,15 @@
     "default_popup": "popup.html"
   },
   "options_page": "options.html",
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "permissions": [
     "storage",
     "scripting",
-    "activeTab"
+    "activeTab",
+
+    "webNavigation"
   ]
 }
