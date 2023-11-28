@@ -21,7 +21,6 @@ async function convertPdfToJson(): Promise<void> {
 
     // Read PDF file
     const dataBuffer = fs.readFileSync(pdfPath);
-9p
     // Parse PDF
     const data = await pdf(dataBuffer);
 
