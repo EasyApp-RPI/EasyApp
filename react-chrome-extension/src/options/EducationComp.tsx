@@ -72,7 +72,7 @@ export default function EducationComp() {
                                 type="text"
                                 name="school"
                                 value={edu.edu_name}
-                                onChange={(e) => handleEducationChange(index, e)}
+                                //onChange={(e) => handleEducationChange(index, e)}
                             />
                         </Col>
                         <Form.Label column sm={2}>
@@ -96,8 +96,8 @@ export default function EducationComp() {
                             <Form.Control
                                 type="text"
                                 name="major"
-                                value={edu.major}
-                                onChange={(e) => handleEducationChange(index, e)}
+                                //value={edu.major}
+                                //onChange={(e) => handleEducationChange(index, e)}
                             />
                         </Col>
 
@@ -108,8 +108,8 @@ export default function EducationComp() {
                             <Form.Control
                                 type="date"
                                 name="graduationMonth"
-                                value={edu.graduation}
-                                onChange={(e) => handleEducationChange(index, e)}
+                                //value={edu.graduation}
+                                //onChange={(e) => handleEducationChange(index, e)}
                             />
                         </Col>
                     </Form.Group>

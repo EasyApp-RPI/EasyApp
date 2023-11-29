@@ -1,12 +1,19 @@
 // This app is the settings page where users can enter their info, and tweak general options about the extension
 
+// React and Bootstrap imports
 import React from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { useEffect, useState, ChangeEvent } from 'react';
+import { useEffect, useState,} from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Names from './names';
+
+// Component Imports
+import PersonalComp from './PersonalComp';
+import WorkComp from './WorkComp';
 import EducationComp from './EducationComp';
+import InterestComp from './InterestsComp';
+import SkillsComp from './SkillsComp';
+import FileComp from './FileComp';
 
 // openDB function returns a Promise that resolves to an IndexedDB database instance
 const openDB = (): Promise<IDBDatabase> => {
@@ -137,7 +144,7 @@ function EasyAppOptions() {
   // Sets initial state of form fields
   const [FormData, setFormData] = useState([
 
-    { key: 'email', value: '', label: 'Email', type: 'input',required: true },
+    {key: 'email', value: '', label: 'Email', type: 'input',required: true },
     {key:"mobile phone", value:'', label:"Mobile Phone", type:"input",required: true },
     {key:"work phone", value:'', label:"Work Phone", type:"input",required: false},
     {key:"fax", value:'', label:"Pager", type:"input",required: false},
@@ -187,8 +194,18 @@ function EasyAppOptions() {
     { key: 'file_link', value: '', label: 'Links', type: 'textarea' },
 
     // Other
-    { key: 'other_text', value: '', label: 'Other', type: 'textare' },
+    { key: 'other_text', value: '', label: 'Other', type: 'textarea' },
   ]);
+
+  const [PersonalInfo, setPersonalInfo] = useState([
+    { key: 'OpenAI Key', value: '', label: 'OpenAi Key', type: 'input', required: true },
+    { key: 'First name', value: '', label: 'First Name', type: 'input', required: true },
+    { key: 'Middle name', value: '', label: 'Middle Name', type: 'input', required: false },
+    { key: 'Last name', value: '', label: 'Last Name', type: 'input', required: true },
+    { key: 'Email', value: '', label: 'Email', type:'input', required: true },
+    { key: 'Mobile Number', value: '', label: 'Mobile Number', type:'input', required: false },
+    { key: 'Phone Number', value: '', label: 'Phone Number', type:'input', required: false },
+  ])
 
   // On page load/refresh it loads local storage data into the value of the form field.
 
@@ -300,21 +317,20 @@ function EasyAppOptions() {
       handleFormDataLoad();
     });
   };
+
+  const temp = "Test";
   return (
     <>
-      <style type='text/css'>
-        {`
-                .bgColor{
-                    background-color: red; 
-                    color: white;
-                    }
-                `}
-      </style>
       <Container>
-        <h2 className='text-center mb-4'>EasyApp Options</h2>
+        <h1 className='text-center mb-4 mt-4'>EasyApp Options</h1>
 
         <Form>
-          <Names/>
+          <PersonalComp info={PersonalInfo} setInfo={setPersonalInfo}/>
+          <WorkComp/>
+          {/*<EducationComp/>*/}
+          <InterestComp/>
+          <SkillsComp/>
+          <FileComp/>
 
           <Form.Group>
             <Form.Label>Upload Resume:</Form.Label>
