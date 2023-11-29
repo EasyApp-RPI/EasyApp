@@ -59,6 +59,24 @@ export default function PersonalComp({info, setInfo}){
           {Field(6) /* Work Phone Number */}
         </Col>
       </Row>
+
+      <Row>
+        {Field(7) /* Address */} 
+      </Row>
+
+      <Row>
+        <Col>
+          {Field(8) /* Country */}
+        </Col>
+
+        <Col>
+          {Field(9) /* State */}
+        </Col>
+
+        <Col>
+          {Field(10) /* City */}
+        </Col>
+      </Row>
     </>
   )
 }

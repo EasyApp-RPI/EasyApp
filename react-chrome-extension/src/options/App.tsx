@@ -144,14 +144,6 @@ function EasyAppOptions() {
   // Sets initial state of form fields
   const [FormData, setFormData] = useState([
 
-    {key: 'email', value: '', label: 'Email', type: 'input',required: true },
-    {key:"mobile phone", value:'', label:"Mobile Phone", type:"input",required: true },
-    {key:"work phone", value:'', label:"Work Phone", type:"input",required: false},
-    {key:"fax", value:'', label:"Pager", type:"input",required: false},
-    {key:"pager", value:'', label:"Pager", type:"input",required: false },
-    {key:"home phone", value:'', label:"Home Phone", type:"input",required: false},
-    {key:"other phone", value:'', label:"Mobile Phone", type:"input",required: true },
-
     { key: 'country', value: '', label: 'Country', type: 'input',required: true },
     { key: 'street', value: '', label: 'Street', type: 'input',required: false },
     { key: 'town', value: '', label: 'Town', type: 'input',required: false },
@@ -205,12 +197,17 @@ function EasyAppOptions() {
     { key: 'Email', value: '', label: 'Email', type:'input', required: true },
     { key: 'Mobile Number', value: '', label: 'Mobile Number', type:'input', required: false },
     { key: 'Phone Number', value: '', label: 'Phone Number', type:'input', required: false },
+    { key: 'Address', value: '', label: 'Address', type:'input', required: false },
+    { key: 'Country', value: '', label: 'Country', type:'input', required: false },
+    { key: 'State', value: '', label: 'State', type:'input', required: false },
+    { key: 'City', value: '', label: 'City', type:'input', required: false },
   ])
 
   // On page load/refresh it loads local storage data into the value of the form field.
 
   // Loads data from local storage into the stateful FormData variable
   const handleFormDataLoad = () => {
+    /*
     FormData.forEach((data, index) => {
       chrome.storage.sync.get([data.key], function (result) {
         if (result[data.key] !== undefined) {
@@ -219,18 +216,35 @@ function EasyAppOptions() {
         }
       });
     });
+    */
+    PersonalInfo.forEach((data, index) => {
+      chrome.storage.sync.get([data.key], function (result) {
+        if (result[data.key] !== undefined) {
+          data.value = result[data.key];
+          handleFormDataChange(index, data.value, "Personal");
+        }
+      });
+    });
   };
 
   // Updates FormData on change to any form field
-  const handleFormDataChange = (index: any, str: any) => {
+  const handleFormDataChange = (index: any, str: any, section:any) => {
+    if(section === "Personal"){
+      const updatedData = [...PersonalInfo];
+      updatedData[index].value = str;
+      setPersonalInfo(updatedData);
+    }
+    /*
     const updatedData = [...FormData];
     updatedData[index].value = str;
     setFormData(updatedData);
+    */
   };
 
   // Stores current FormData in the local storage
 
   const handleClear = () => {
+    //! Make it so it traverses all new form fields
     FormData.map((data: { key: string; value: string }) => {
       localStorage.setItem(data.key, '');
     });
@@ -304,9 +318,13 @@ function EasyAppOptions() {
     let dataToSave: { [key: string]: string } = {};
 
     // Iterate over form data and trim values
-    FormData.forEach((data) => {
+    //! Make it so it traverses all new fields
+    //FormData.forEach((data) => {
+    //  dataToSave[data.key] = data.value.trim();
+    //});
+    PersonalInfo.forEach((data) => {
       dataToSave[data.key] = data.value.trim();
-    });
+    })
 
     // Save the form data to chrome.storage.sync
     chrome.storage.sync.set(dataToSave, function () {
