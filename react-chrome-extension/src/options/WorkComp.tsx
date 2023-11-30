@@ -6,7 +6,7 @@ export default function WorkComp(){
 
     return (
       <Container>
-        <h1>Work Component Heading!</h1>
+        <h2 className='text-center mb-3'>Work Experience</h2>
       </Container>
     )
 }

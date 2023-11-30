@@ -6,7 +6,7 @@ export default function FileComp(){
 
     return (
       <Container>
-        <h1>File Component Heading!</h1>
+        <h2 className='text-center mb-3'>Files</h2>
       </Container>
     )
 }
