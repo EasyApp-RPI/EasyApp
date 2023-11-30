@@ -34,7 +34,7 @@ function EasyAppPopup() {
   return (
     <Container className='text-center m-1'>
       <Image
-        src='icons/easyAppDark.svg'
+        src='icons/easyAppLight.svg'
         alt='EasyApp Logo'
         id='logo'
         className='mx-auto d-block w-75'

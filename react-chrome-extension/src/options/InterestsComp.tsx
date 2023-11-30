@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState} from 'react';
-import {Container, Row, Col, Form, Button} from 'react-bootstrap';
+import {Row, Col, Form, Button} from 'react-bootstrap';
 
 export default function InterestComp({info, setInfo}){
 
@@ -11,7 +11,7 @@ export default function InterestComp({info, setInfo}){
   }
 
   const handleDataAdd = () => {
-    setInfo([...info, { key: `Interest`, value: '', label: 'Interest', type:'input', required: false }]);
+    setInfo([...info, { key: 'Interest', value: '', label: 'Interest', type:'input', required: false }]);
   };
 
   const handleRemoveExperience = (index) => {

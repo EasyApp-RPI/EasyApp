@@ -13,7 +13,6 @@ import WorkComp from './WorkComp';
 import EducationComp from './EducationComp';
 import InterestComp from './InterestsComp';
 import SkillsComp from './SkillsComp';
-import FileComp from './FileComp';
 
 // openDB function returns a Promise that resolves to an IndexedDB database instance
 const openDB = (): Promise<IDBDatabase> => {
@@ -141,42 +140,10 @@ const removeFile = (fileKey: string) => {
 };
 
 function EasyAppOptions() {
-  // Sets initial state of form fields
-  const [FormData, setFormData] = useState([
-    { key: 'company', value: '', label: 'Company', type: 'input' },
-    { key: 'comp_location', value: '', label: 'Location', type: 'input' },
-    { key: 'title', value: '', label: 'Title', type: 'input' },
-    { key: 'from', value: '', label: 'From', type: 'input' },
-    { key: 'to', value: '', label: 'To', type: 'input' },
-    { key: 'description', value: '', label: 'Description', type: 'input' },
-
-    { key: 'name', value: '', label: 'Name', type: 'input' },
-    { key: 'major', value: '', label: 'Major', type: 'input' },
-    { key: 'interests', value: '', label: 'Interests', type: 'textarea' },
-    { key: 'skills', value: '', label: 'Skills', type: 'textarea' },
-    { key: 'experience', value: '', label: 'Experience', type: 'textarea' },
-    { key: 'links', value: '', label: 'Links', type: 'textarea' },
-    {
-      key: 'supplement',
-      value: '',
-      label: 'Other',
-      type: 'textarea',
-    },
-
-    // Education box
-
-
-    // File upload
-    { key: 'file_resume', value: '', label: 'Upload Resume', type: 'file' },
-    { key: 'file_CV', value: '', label: 'Upload CV', type: 'file' },
-    { key: 'file_resume', value: '', label: 'Upload Resume', type: 'file' },
-    { key: 'file_link', value: '', label: 'Upload Cover Letter', type: 'file' },
-    { key: 'file_link', value: '', label: 'Links', type: 'textarea' },
-  ]);
 
   // Personal Information Form Data
   const [PersonalInfo, setPersonalInfo] = useState([
-    { key: 'OpenAI Key', value: '', label: 'OpenAi Key', type: 'input', required: true },
+    { key: 'OpenAI Key', value: '', label: 'OpenAI Key', type: 'input', required: true },
     { key: 'First name', value: '', label: 'First Name', type: 'input', required: true },
     { key: 'Middle name', value: '', label: 'Middle Name', type: 'input', required: false },
     { key: 'Last name', value: '', label: 'Last Name', type: 'input', required: true },
@@ -188,6 +155,24 @@ function EasyAppOptions() {
     { key: 'State', value: '', label: 'State', type:'input', required: false },
     { key: 'City', value: '', label: 'City', type:'input', required: false },
     { key: 'Zip Code', value: '', label: 'Zip Code', type:'input', required: false },
+  ]);
+
+  const [Education, setEducation] = useState([
+    { key:'Education', 
+      School: {key:'School', value: '' , label:'School', type:'input'},
+      Degree: {key:'Degree', value: '' , label:'Degree', type:'input'},
+      Major: {key:'Major', value: '' , label:'Major', type:'input'},
+      Start: {key:'Start Year', value: '' , label:'Start Year', type:'input'}, 
+      End: {key:'End Year', value: '' , label:'End Year', type:'input'}
+    }
+  ]);
+
+  const [WorkExp, setWorkExp] = useState([
+    { key:'WorkExp', 
+      Company: {key: 'Company', value: '' , label:'Company', type:'input'},
+      Title: {key: 'Position Title', value: '' , label:'Title', type:'input'}, 
+      Description: {key: 'Description', value: '' , label:'Description', type:'textarea'}, 
+    }
   ]);
 
   const [Interests, setInterests] = useState([
@@ -207,6 +192,18 @@ function EasyAppOptions() {
           handleFormDataChange(index, data.value, "Personal");
         }
       });
+    });
+
+    chrome.storage.sync.get(["WorkExp"], function (result) {
+      if (result["WorkExp"] !== undefined) {
+        setWorkExp(result["WorkExp"]);
+      }
+    });
+
+    chrome.storage.sync.get(["Education"], function (result) {
+      if (result["Education"] !== undefined) {
+        setEducation(result["Education"]);
+      }
     });
 
     chrome.storage.sync.get(["Interests"], function (result) {
@@ -230,29 +227,13 @@ function EasyAppOptions() {
       updatedData[index].value = str;
       setPersonalInfo(updatedData);
     }
-    
-    if(section === "Interests"){
-      const updatedData = [...Interests];
-      updatedData[index].value = str;
-      setInterests(updatedData);
-    }
-
-    if(section === "Skills"){
-      const updatedData = [...Skills];
-      updatedData[index].value = str;
-      setSkills(updatedData);
-    }
   };
 
   // Stores current FormData in the local storage
 
   const handleClear = () => {
-    //! Make it so it traverses all new form fields
-    FormData.map((data: { key: string; value: string }) => {
-      localStorage.setItem(data.key, '');
-    });
-    location.reload();
-    handleFormDataLoad;
+    
+    // Just go back to blank states then run call submission
   };
 
   // Limit the size of the file uploaded
@@ -326,6 +307,18 @@ function EasyAppOptions() {
       dataToSave[data.key] = data.value.trim();
     })
 
+    let WorkExpArray = [];
+    WorkExp.forEach((data) => {
+      WorkExpArray.push(data);
+    })
+    dataToSave["WorkExp"] = WorkExpArray;
+
+    let EducationArray = [];
+    Education.forEach((data) => {
+      EducationArray.push(data);
+    })
+    dataToSave["Education"] = EducationArray;
+
     // Iterates over all Interests and Adds them to array
     let InterestsArray = [];
     Interests.forEach((data) => {
@@ -358,19 +351,19 @@ function EasyAppOptions() {
 
         <Form>
           <hr/>
-          <Row>
+          <Row className='mb-3'>
             <PersonalComp info={PersonalInfo} setInfo={setPersonalInfo}/>
           </Row>
           <hr/>
-          <Row>
-            <WorkComp/>
+          <Row className='mb-3'>
+            <WorkComp info={WorkExp} setInfo={setWorkExp}/>
           </Row>
           <hr/>
-          <Row>
-            {/*<EducationComp/>*/}
+          <Row className='mb-3'>
+            <EducationComp info={Education} setInfo={setEducation}/>
           </Row>
           <hr/>
-          <Row>
+          <Row className='mb-3'>
             <Col>
               <InterestComp info={Interests} setInfo={setInterests}/>
             </Col>
@@ -380,7 +373,7 @@ function EasyAppOptions() {
             </Col>
           </Row>
           <hr/>
-          <FileComp/>
+          <h2 className='text-center mb-3'>Files</h2>
           <Form.Group>
             <Form.Label>Upload Resume:</Form.Label>
             <Form.Control

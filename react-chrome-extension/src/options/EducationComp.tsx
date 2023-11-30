@@ -1,130 +1,126 @@
-import {useState} from "react"
+import React from 'react';
+import {useState} from 'react';
 import {Row, Col, Form, Button} from 'react-bootstrap';
 
-export default function EducationComp() {
+export default function EducationComp({info, setInfo}){
 
-    const degreeOptions =
-        [ {name: "High School", value: "Highschool"},
-            {name: "Associate's Degree", value: "Associates"},
-            {name: "Bachelor's Degree", value: "Bachelors"},
-            {name: "Master's Degree", value: "Masters"},
-            {name: "Master of Business Administration (M.B.A)", value: "MBA"},
-            {name: "Juris Doctor (J.D.)", value: "JD"},
-            {name: "Doctor of Medicine (M.D.)", value: "MD"},
-            {name: "Doctor of Philosophy (Ph.D.)", value: "PHD"}
-        ]
-
-    interface Education {
-        edu_name: string;
-        edu_degree: string;
-        edu_major: string;
-        edu_location: string;
-        edu_gpa: string;
-        edu_from: string;
-        edu_to: string;
-        edu_current: boolean;
+  const handleDataChange = (index, str, section) => {
+    const updatedData = [...info];
+    switch (section) {
+      case 1: updatedData[index].School.value = str; break;
+      case 2: updatedData[index].Degree.value = str; break;
+      case 3: updatedData[index].Major.value = str; break;
+      case 4: updatedData[index].Start.value = str; break;
+      case 5: updatedData[index].End.value = str; break;
+      default: break;
     }
-    const [education, setEducation] = useState([
-        {
-            edu_name: '',
-            edu_degree: '',
-            edu_major: '',
-            edu_location: '',
-            edu_gpa: '',
-            edu_from: '',
-            edu_to: '',
-            edu_current: false
-        }
-    ]);
+    setInfo(updatedData);
+  }
 
-    const handleAddEducation = () => {
-        setEducation([...education, { edu_name: '', edu_degree: '', edu_major: '', edu_location: '', edu_gpa: '', edu_from: '', edu_to: '', edu_current: false }]);
-    };
+  const handleDataAdd = () => {
+    setInfo([...info, { key:'Education', 
+    School: {key:'School', value: '' , label:'School', type:'input'},
+    Degree: {key:'Degree', value: '' , label:'Degree', type:'input'},
+    Major: {key:'Major', value: '' , label:'Major', type:'input'},
+    Start: {key:'Start Year', value: '' , label:'Start Year', type:'input'}, 
+    End: {key:'End Year', value: '' , label:'End Year', type:'input'}
+  }]);
+  };
 
-    const handleRemoveEducation = (index: number) => {
-        const updatedEducation = [...education];
-        updatedEducation.splice(index, 1);
-        setEducation(updatedEducation);
-    };
+  const handleRemoveEducation = (index) => {
+    const updatedEducation = [...info];
+    updatedEducation.splice(index, 1);
+    setInfo(updatedEducation);
+  };
 
-    const handleEducationChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-        const updatedEducation = [...education];
-        const {name, value, type, checked} = event.target;
-
-        if (type == "checkbox"){
-            (updatedEducation[index] as any)[name] = checked;
-        }else{
-            (updatedEducation[index] as any)[name] = value;
-        }
-        setEducation(updatedEducation);
-    };
-
-    return (
-        <>
-            {education.map((edu, index) => (
-                <div key={index}>
-                    <Form.Group as={Row}>
-                        <Form.Label column sm={2}>
-                            School:
-                        </Form.Label>
-                        <Col sm={4}>
-                            <Form.Control
-                                type="text"
-                                name="school"
-                                value={edu.edu_name}
-                                //onChange={(e) => handleEducationChange(index, e)}
-                            />
-                        </Col>
-                        <Form.Label column sm={2}>
-                            Degree:
-                        </Form.Label>
-                        <Col sm={4}>
-                            <Form.Select aria-label="degree">
-                                <option key={0} value="none">Select a Degree</option>
-                                {degreeOptions.map((option, index) => (
-                                    <option key={index + 1} value={option.value}> {option.name} </option>
-                                ))}
-                            </Form.Select>
-                        </Col>
-                    </Form.Group>
-
-                    <Form.Group as={Row} className="pb-3">
-                        <Form.Label column sm={2}>
-                            Major:
-                        </Form.Label>
-                        <Col sm={4}>
-                            <Form.Control
-                                type="text"
-                                name="major"
-                                //value={edu.major}
-                                //onChange={(e) => handleEducationChange(index, e)}
-                            />
-                        </Col>
-
-                        <Form.Label column sm={2}>
-                            Graduation Date:
-                        </Form.Label>
-                        <Col sm={4}>
-                            <Form.Control
-                                type="date"
-                                name="graduationMonth"
-                                //value={edu.graduation}
-                                //onChange={(e) => handleEducationChange(index, e)}
-                            />
-                        </Col>
-                    </Form.Group>
-
-                    {index > 0 && (
-                        <Button variant="danger" onClick={() => handleRemoveEducation(index)}>
-                            Remove
-                        </Button>
-                    )}
-
-                </div>
-            ))}
-            <Button variant="primary" className="mt-2" onClick={handleAddEducation}>
-                Add Education
+  function Field(key){
+    return(
+      <>
+        <Row>
+          <Col>
+            <Form.Group>
+              <Form.Control 
+              as = {info[key].School.type}
+              placeholder = {info[key].School.key}
+              defaultValue = {info[key].School.value}
+              value = {info[key].School.value}
+              onChange = {(event) => handleDataChange(key, event.target.value, 1)}
+              />
+            </Form.Group>
+          </Col>
+          <Col xs="auto">
+            <Button variant='danger' onClick={() => handleRemoveEducation(key)}>
+              Delete
             </Button>
-        </>
+          </Col>
+        </Row>
+
+        <Row className='mb-3'>
+            <Col sm={4}>
+                <Form.Group>
+                <Form.Control 
+                as = {info[key].Degree.type}
+                placeholder = {info[key].Degree.key}
+                defaultValue = {info[key].Degree.value}
+                value = {info[key].Degree.value}
+                onChange = {(event) => handleDataChange(key, event.target.value, 2)}
+                />
+                </Form.Group>
+            </Col>
+
+            <Col sm={4}>
+                <Form.Group>
+                    <Form.Control 
+                    as = {info[key].Major.type}
+                    placeholder = {info[key].Major.key}
+                    defaultValue = {info[key].Major.value}
+                    value = {info[key].Major.value}
+                    onChange = {(event) => handleDataChange(key, event.target.value, 3)}
+                    />
+                </Form.Group>
+            </Col>
+
+            <Col sm={2}>
+                <Form.Group>
+                    <Form.Control 
+                    as = {info[key].Start.type}
+                    placeholder = {info[key].Start.key}
+                    defaultValue = {info[key].Start.value}
+                    value = {info[key].Start.value}
+                    onChange = {(event) => handleDataChange(key, event.target.value, 4)}
+                    />
+                </Form.Group>
+            </Col>
+
+            <Col sm={2}>
+                <Form.Group>
+                    <Form.Control 
+                    as = {info[key].End.type}
+                    placeholder = {info[key].End.key}
+                    defaultValue = {info[key].End.value}
+                    value = {info[key].End.value}
+                    onChange = {(event) => handleDataChange(key, event.target.value, 5)}
+                    />
+                </Form.Group>
+            </Col>
+        </Row>
+      </>
     )
+  }
+
+  return (
+    <>
+      <Row>
+        <Col xs="auto">
+          <Button variant='success' onClick={handleDataAdd}>Add</Button>
+        </Col >
+        <Col>
+          <h2 className='text-center mb-3'>Education</h2>
+        </Col>
+      </Row>
+      {info.map((data,index) => {
+        return Field(index);
+      })}
+    </>
+  )
 }
