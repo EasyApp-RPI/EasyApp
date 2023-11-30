@@ -76,6 +76,10 @@ export default function PersonalComp({info, setInfo}){
         <Col>
           {Field(10) /* City */}
         </Col>
+
+        <Col>
+          {Field(11) /* Zip Code */}
+        </Col>
       </Row>
     </>
   )

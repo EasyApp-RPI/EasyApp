@@ -143,13 +143,6 @@ const removeFile = (fileKey: string) => {
 function EasyAppOptions() {
   // Sets initial state of form fields
   const [FormData, setFormData] = useState([
-
-    { key: 'country', value: '', label: 'Country', type: 'input',required: true },
-    { key: 'street', value: '', label: 'Street', type: 'input',required: false },
-    { key: 'town', value: '', label: 'Town', type: 'input',required: false },
-    { key: 'zip code', value: '', label: 'Zip Code', type: 'input',required: false },
-    { key: 'state', value: '', label: 'State', type: 'input',required: false },
-
     { key: 'company', value: '', label: 'Company', type: 'input' },
     { key: 'comp_location', value: '', label: 'Location', type: 'input' },
     { key: 'title', value: '', label: 'Title', type: 'input' },
@@ -166,17 +159,12 @@ function EasyAppOptions() {
     {
       key: 'supplement',
       value: '',
-      label: 'SupplementaryText',
+      label: 'Other',
       type: 'textarea',
     },
 
     // Education box
 
-    // Interests box
-    { key: 'interest_1', value: '', label: 'Interest 1', type: 'textarea' },
-
-    // Skills box
-    { key: 'skill_1', value: '', label: 'Skill 1', type: 'textarea' },
 
     // File upload
     { key: 'file_resume', value: '', label: 'Upload Resume', type: 'file' },
@@ -184,11 +172,9 @@ function EasyAppOptions() {
     { key: 'file_resume', value: '', label: 'Upload Resume', type: 'file' },
     { key: 'file_link', value: '', label: 'Upload Cover Letter', type: 'file' },
     { key: 'file_link', value: '', label: 'Links', type: 'textarea' },
-
-    // Other
-    { key: 'other_text', value: '', label: 'Other', type: 'textarea' },
   ]);
 
+  // Personal Information Form Data
   const [PersonalInfo, setPersonalInfo] = useState([
     { key: 'OpenAI Key', value: '', label: 'OpenAi Key', type: 'input', required: true },
     { key: 'First name', value: '', label: 'First Name', type: 'input', required: true },
@@ -201,22 +187,19 @@ function EasyAppOptions() {
     { key: 'Country', value: '', label: 'Country', type:'input', required: false },
     { key: 'State', value: '', label: 'State', type:'input', required: false },
     { key: 'City', value: '', label: 'City', type:'input', required: false },
-  ])
+    { key: 'Zip Code', value: '', label: 'Zip Code', type:'input', required: false },
+  ]);
 
-  // On page load/refresh it loads local storage data into the value of the form field.
+  const [Interests, setInterests] = useState([
+    { key: 'Interest', value: '', label: 'Interest', type:'input', required: false },
+  ]);
+
+  const [Skills, setSkills] = useState([
+    { key: 'Skill', value: '', label: 'Skill', type:'input', required: false },
+  ]);
 
   // Loads data from local storage into the stateful FormData variable
   const handleFormDataLoad = () => {
-    /*
-    FormData.forEach((data, index) => {
-      chrome.storage.sync.get([data.key], function (result) {
-        if (result[data.key] !== undefined) {
-          data.value = result[data.key];
-          handleFormDataChange(index, data.value);
-        }
-      });
-    });
-    */
     PersonalInfo.forEach((data, index) => {
       chrome.storage.sync.get([data.key], function (result) {
         if (result[data.key] !== undefined) {
@@ -225,6 +208,19 @@ function EasyAppOptions() {
         }
       });
     });
+
+    chrome.storage.sync.get(["Interests"], function (result) {
+      if (result["Interests"] !== undefined) {
+        setInterests(result["Interests"]);
+      }
+    });
+
+    chrome.storage.sync.get(["Skills"], function (result) {
+      if (result["Skills"] !== undefined) {
+        setSkills(result["Skills"]);
+      }
+    });
+
   };
 
   // Updates FormData on change to any form field
@@ -234,11 +230,18 @@ function EasyAppOptions() {
       updatedData[index].value = str;
       setPersonalInfo(updatedData);
     }
-    /*
-    const updatedData = [...FormData];
-    updatedData[index].value = str;
-    setFormData(updatedData);
-    */
+    
+    if(section === "Interests"){
+      const updatedData = [...Interests];
+      updatedData[index].value = str;
+      setInterests(updatedData);
+    }
+
+    if(section === "Skills"){
+      const updatedData = [...Skills];
+      updatedData[index].value = str;
+      setSkills(updatedData);
+    }
   };
 
   // Stores current FormData in the local storage
@@ -304,6 +307,7 @@ function EasyAppOptions() {
     const files = await getAllFiles();
     console.log(files); // You can handle these files as needed (e.g., display in the UI)
   };
+  
   useEffect(() => {
     handleFormDataLoad();
     handleFileChange;
@@ -315,16 +319,26 @@ function EasyAppOptions() {
     traverseFileInputs();
 
     // Initialize an object to store form data
-    let dataToSave: { [key: string]: string } = {};
+    let dataToSave = {};
 
-    // Iterate over form data and trim values
-    //! Make it so it traverses all new fields
-    //FormData.forEach((data) => {
-    //  dataToSave[data.key] = data.value.trim();
-    //});
+    // Iterate over Personal Info and trim values
     PersonalInfo.forEach((data) => {
       dataToSave[data.key] = data.value.trim();
     })
+
+    // Iterates over all Interests and Adds them to array
+    let InterestsArray = [];
+    Interests.forEach((data) => {
+      InterestsArray.push(data);
+    })
+    dataToSave["Interests"] = InterestsArray;
+
+    // Iterates over all Interests and Adds them to array
+    let SkillsArray = [];
+    Skills.forEach((data) => {
+      SkillsArray.push(data);
+    })
+    dataToSave["Skills"] = SkillsArray;
 
     // Save the form data to chrome.storage.sync
     chrome.storage.sync.set(dataToSave, function () {
@@ -343,13 +357,30 @@ function EasyAppOptions() {
         <h1 className='text-center mb-4 mt-4'>EasyApp Options</h1>
 
         <Form>
-          <PersonalComp info={PersonalInfo} setInfo={setPersonalInfo}/>
-          <WorkComp/>
-          {/*<EducationComp/>*/}
-          <InterestComp/>
-          <SkillsComp/>
-          <FileComp/>
+          <hr/>
+          <Row>
+            <PersonalComp info={PersonalInfo} setInfo={setPersonalInfo}/>
+          </Row>
+          <hr/>
+          <Row>
+            <WorkComp/>
+          </Row>
+          <hr/>
+          <Row>
+            {/*<EducationComp/>*/}
+          </Row>
+          <hr/>
+          <Row>
+            <Col>
+              <InterestComp info={Interests} setInfo={setInterests}/>
+            </Col>
 
+            <Col>
+            <SkillsComp info={Skills} setInfo={setSkills}/>
+            </Col>
+          </Row>
+          <hr/>
+          <FileComp/>
           <Form.Group>
             <Form.Label>Upload Resume:</Form.Label>
             <Form.Control
