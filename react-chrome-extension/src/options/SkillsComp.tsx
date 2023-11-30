@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState} from 'react';
-import {Container, Row, Col, Form, Button} from 'react-bootstrap';
+import {Row, Col, Form, Button} from 'react-bootstrap';
 
 export default function SkillsComp({info, setInfo}){
 
