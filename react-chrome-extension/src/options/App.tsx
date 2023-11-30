@@ -3,7 +3,7 @@
 // React and Bootstrap imports
 import React from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { useEffect, useState,} from 'react';
+import { useEffect, useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -140,47 +140,123 @@ const removeFile = (fileKey: string) => {
 };
 
 function EasyAppOptions() {
-
   // Personal Information Form Data
   const [PersonalInfo, setPersonalInfo] = useState([
-    { key: 'OpenAI Key', value: '', label: 'OpenAI Key', type: 'input', required: true },
-    { key: 'First name', value: '', label: 'First Name', type: 'input', required: true },
-    { key: 'Middle name', value: '', label: 'Middle Name', type: 'input', required: false },
-    { key: 'Last name', value: '', label: 'Last Name', type: 'input', required: true },
-    { key: 'Email', value: '', label: 'Email', type:'input', required: true },
-    { key: 'Mobile Number', value: '', label: 'Mobile Number', type:'input', required: false },
-    { key: 'Phone Number', value: '', label: 'Phone Number', type:'input', required: false },
-    { key: 'Address', value: '', label: 'Address', type:'input', required: false },
-    { key: 'Country', value: '', label: 'Country', type:'input', required: false },
-    { key: 'State', value: '', label: 'State', type:'input', required: false },
-    { key: 'City', value: '', label: 'City', type:'input', required: false },
-    { key: 'Zip Code', value: '', label: 'Zip Code', type:'input', required: false },
+    {
+      key: 'OpenAI Key',
+      value: '',
+      label: 'OpenAI Key',
+      type: 'input',
+      required: true,
+    },
+    {
+      key: 'First name',
+      value: '',
+      label: 'First Name',
+      type: 'input',
+      required: true,
+    },
+    {
+      key: 'Middle name',
+      value: '',
+      label: 'Middle Name',
+      type: 'input',
+      required: false,
+    },
+    {
+      key: 'Last name',
+      value: '',
+      label: 'Last Name',
+      type: 'input',
+      required: true,
+    },
+    { key: 'Email', value: '', label: 'Email', type: 'input', required: true },
+    {
+      key: 'Mobile Number',
+      value: '',
+      label: 'Mobile Number',
+      type: 'input',
+      required: false,
+    },
+    {
+      key: 'Phone Number',
+      value: '',
+      label: 'Phone Number',
+      type: 'input',
+      required: false,
+    },
+    {
+      key: 'Address',
+      value: '',
+      label: 'Address',
+      type: 'input',
+      required: false,
+    },
+    {
+      key: 'Country',
+      value: '',
+      label: 'Country',
+      type: 'input',
+      required: false,
+    },
+    { key: 'State', value: '', label: 'State', type: 'input', required: false },
+    { key: 'City', value: '', label: 'City', type: 'input', required: false },
+    {
+      key: 'Zip Code',
+      value: '',
+      label: 'Zip Code',
+      type: 'input',
+      required: false,
+    },
   ]);
 
   const [Education, setEducation] = useState([
-    { key:'Education', 
-      School: {key:'School', value: '' , label:'School', type:'input'},
-      Degree: {key:'Degree', value: '' , label:'Degree', type:'input'},
-      Major: {key:'Major', value: '' , label:'Major', type:'input'},
-      Start: {key:'Start Year', value: '' , label:'Start Year', type:'input'}, 
-      End: {key:'End Year', value: '' , label:'End Year', type:'input'}
-    }
+    {
+      key: 'Education',
+      School: { key: 'School', value: '', label: 'School', type: 'input' },
+      Degree: { key: 'Degree', value: '', label: 'Degree', type: 'input' },
+      Major: { key: 'Major', value: '', label: 'Major', type: 'input' },
+      Start: {
+        key: 'Start Year',
+        value: '',
+        label: 'Start Year',
+        type: 'input',
+      },
+      End: { key: 'End Year', value: '', label: 'End Year', type: 'input' },
+    },
   ]);
 
   const [WorkExp, setWorkExp] = useState([
-    { key:'WorkExp', 
-      Company: {key: 'Company', value: '' , label:'Company', type:'input'},
-      Title: {key: 'Position Title', value: '' , label:'Title', type:'input'}, 
-      Description: {key: 'Description', value: '' , label:'Description', type:'textarea'}, 
-    }
+    {
+      key: 'WorkExp',
+      Company: { key: 'Company', value: '', label: 'Company', type: 'input' },
+      Title: {
+        key: 'Position Title',
+        value: '',
+        label: 'Title',
+        type: 'input',
+      },
+      Description: {
+        key: 'Description',
+        value: '',
+        label: 'Description',
+        type: 'textarea',
+      },
+    },
   ]);
 
   const [Interests, setInterests] = useState([
-    { key: 'Interest', value: '', label: 'Interest', type:'input', required: false },
+    {
+      key: 'Interest',
+      value: '',
+      label: 'Interest',
+      type: 'input',
+      required: false,
+    },
   ]);
 
   const [Skills, setSkills] = useState([
-    { key: 'Skill', value: '', label: 'Skill', type:'input', required: false },
+    { key: 'Skill', value: '', label: 'Skill', type: 'input', required: false },
   ]);
 
   // Loads data from local storage into the stateful FormData variable
@@ -189,40 +265,39 @@ function EasyAppOptions() {
       chrome.storage.sync.get([data.key], function (result) {
         if (result[data.key] !== undefined) {
           data.value = result[data.key];
-          handleFormDataChange(index, data.value, "Personal");
+          handleFormDataChange(index, data.value, 'Personal');
         }
       });
     });
 
-    chrome.storage.sync.get(["WorkExp"], function (result) {
-      if (result["WorkExp"] !== undefined) {
-        setWorkExp(result["WorkExp"]);
+    chrome.storage.sync.get(['WorkExp'], function (result) {
+      if (result['WorkExp'] !== undefined) {
+        setWorkExp(result['WorkExp']);
       }
     });
 
-    chrome.storage.sync.get(["Education"], function (result) {
-      if (result["Education"] !== undefined) {
-        setEducation(result["Education"]);
+    chrome.storage.sync.get(['Education'], function (result) {
+      if (result['Education'] !== undefined) {
+        setEducation(result['Education']);
       }
     });
 
-    chrome.storage.sync.get(["Interests"], function (result) {
-      if (result["Interests"] !== undefined) {
-        setInterests(result["Interests"]);
+    chrome.storage.sync.get(['Interests'], function (result) {
+      if (result['Interests'] !== undefined) {
+        setInterests(result['Interests']);
       }
     });
 
-    chrome.storage.sync.get(["Skills"], function (result) {
-      if (result["Skills"] !== undefined) {
-        setSkills(result["Skills"]);
+    chrome.storage.sync.get(['Skills'], function (result) {
+      if (result['Skills'] !== undefined) {
+        setSkills(result['Skills']);
       }
     });
-
   };
 
   // Updates FormData on change to any form field
-  const handleFormDataChange = (index: any, str: any, section:any) => {
-    if(section === "Personal"){
+  const handleFormDataChange = (index: any, str: any, section: any) => {
+    if (section === 'Personal') {
       const updatedData = [...PersonalInfo];
       updatedData[index].value = str;
       setPersonalInfo(updatedData);
@@ -232,7 +307,6 @@ function EasyAppOptions() {
   // Stores current FormData in the local storage
 
   const handleClear = () => {
-    
     // Just go back to blank states then run call submission
   };
 
@@ -288,7 +362,7 @@ function EasyAppOptions() {
     const files = await getAllFiles();
     console.log(files); // You can handle these files as needed (e.g., display in the UI)
   };
-  
+
   useEffect(() => {
     handleFormDataLoad();
     handleFileChange;
@@ -305,33 +379,33 @@ function EasyAppOptions() {
     // Iterate over Personal Info and trim values
     PersonalInfo.forEach((data) => {
       dataToSave[data.key] = data.value.trim();
-    })
+    });
 
     let WorkExpArray = [];
     WorkExp.forEach((data) => {
       WorkExpArray.push(data);
-    })
-    dataToSave["WorkExp"] = WorkExpArray;
+    });
+    dataToSave['WorkExp'] = WorkExpArray;
 
     let EducationArray = [];
     Education.forEach((data) => {
       EducationArray.push(data);
-    })
-    dataToSave["Education"] = EducationArray;
+    });
+    dataToSave['Education'] = EducationArray;
 
     // Iterates over all Interests and Adds them to array
     let InterestsArray = [];
     Interests.forEach((data) => {
       InterestsArray.push(data);
-    })
-    dataToSave["Interests"] = InterestsArray;
+    });
+    dataToSave['Interests'] = InterestsArray;
 
     // Iterates over all Interests and Adds them to array
     let SkillsArray = [];
     Skills.forEach((data) => {
       SkillsArray.push(data);
-    })
-    dataToSave["Skills"] = SkillsArray;
+    });
+    dataToSave['Skills'] = SkillsArray;
 
     // Save the form data to chrome.storage.sync
     chrome.storage.sync.set(dataToSave, function () {
@@ -343,36 +417,36 @@ function EasyAppOptions() {
     });
   };
 
-  const temp = "Test";
+  const temp = 'Test';
   return (
     <>
       <Container>
         <h1 className='text-center mb-4 mt-4'>EasyApp Options</h1>
 
         <Form>
-          <hr/>
+          <hr />
           <Row className='mb-3'>
-            <PersonalComp info={PersonalInfo} setInfo={setPersonalInfo}/>
+            <PersonalComp info={PersonalInfo} setInfo={setPersonalInfo} />
           </Row>
-          <hr/>
+          <hr />
           <Row className='mb-3'>
-            <WorkComp info={WorkExp} setInfo={setWorkExp}/>
+            <WorkComp info={WorkExp} setInfo={setWorkExp} />
           </Row>
-          <hr/>
+          <hr />
           <Row className='mb-3'>
-            <EducationComp info={Education} setInfo={setEducation}/>
+            <EducationComp info={Education} setInfo={setEducation} />
           </Row>
-          <hr/>
+          <hr />
           <Row className='mb-3'>
             <Col>
-              <InterestComp info={Interests} setInfo={setInterests}/>
+              <InterestComp info={Interests} setInfo={setInterests} />
             </Col>
 
             <Col>
-            <SkillsComp info={Skills} setInfo={setSkills}/>
+              <SkillsComp info={Skills} setInfo={setSkills} />
             </Col>
           </Row>
-          <hr/>
+          <hr />
           <h2 className='text-center mb-3'>Files</h2>
           <Form.Group>
             <Form.Label>Upload Resume:</Form.Label>
