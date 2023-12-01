@@ -308,6 +308,58 @@ function EasyAppOptions() {
 
   const handleClear = () => {
     // Just go back to blank states then run call submission
+    chrome.storage.sync.clear()
+    
+    setEducation([
+      {
+        key: 'Education',
+        School: { key: 'School', value: '', label: 'School', type: 'input' },
+        Degree: { key: 'Degree', value: '', label: 'Degree', type: 'input' },
+        Major: { key: 'Major', value: '', label: 'Major', type: 'input' },
+        Start: {
+          key: 'Start Year',
+          value: '',
+          label: 'Start Year',
+          type: 'input',
+        },
+        End: { key: 'End Year', value: '', label: 'End Year', type: 'input' },
+      },
+    ]);
+
+    setWorkExp([
+      {
+        key: 'WorkExp',
+        Company: { key: 'Company', value: '', label: 'Company', type: 'input' },
+        Title: {
+          key: 'Position Title',
+          value: '',
+          label: 'Title',
+          type: 'input',
+        },
+        Description: {
+          key: 'Description',
+          value: '',
+          label: 'Description',
+          type: 'textarea',
+        },
+      },
+    ]);
+
+    setInterests([
+      {
+        key: 'Interest',
+        value: '',
+        label: 'Interest',
+        type: 'input',
+        required: false,
+      },
+    ]);
+
+    setSkills([
+      { key: 'Skill', value: '', label: 'Skill', type: 'input', required: false },
+    ]);
+
+    handleFormDataLoad();
   };
 
   // Limit the size of the file uploaded
