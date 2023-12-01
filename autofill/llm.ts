@@ -25,17 +25,20 @@ export const model = new OpenAI({
 const normPrompt = PromptTemplate.fromTemplate(`
 {userInfo}
 
-Given this user information, respond to the input field label and name
+Given this user information, respond to the input field label and name. If no data is given, respond with null
 
 field data: <input aria-describedby="firstNameDescription" ng-required="true" title="First Name" ng-if="!form.fieldAddonLeft &amp;&amp; !form.fieldAddonRight" ng-show="form.key" type="text" step="any" sf-changed="form" autocomplete="on" placeholder="Input text" class="form-control  ng-touched ng-dirty ng-valid-parse ng-empty ng-invalid ng-invalid-tv4-302 ng-invalid-required ng-invalid-schema-form" id="firstName" ng-model-options="form.ngModelOptions" ng-model="model['firstName']" ng-disabled="form.readonly" schema-validate="form" name="firstName" required="required">
+field label: First Name
 
 input text: {firstName}
 
 field data: <input aria-describedby="unameDescription" ng-required="true" title="Primary Email" ng-if="!form.fieldAddonLeft &amp;&amp; !form.fieldAddonRight" ng-show="form.key" type="text" step="any" sf-changed="form" autocomplete="on" placeholder="Input text" class="form-control  ng-empty ng-invalid ng-invalid-required ng-valid-invalid-email ng-invalid-schema-form" id="uname" ng-model-options="form.ngModelOptions" ng-model="model['uname']" ng-disabled="form.readonly" schema-validate="form" name="uname" required="required">
+field label: Primary Email
 
 input text: {email}
 
 field data: {fieldData}
+field label: {fieldLabel}
 
 input text:
 `);
@@ -130,6 +133,7 @@ input text:
 export const answerField = async (
   userInfo: UserInfo,
   fieldData: inputElements,
+  fieldLabel: string,
 ) => {
   const chain = new LLMChain({ llm: model, prompt: normPrompt });
   let result = await chain.call({
@@ -137,6 +141,7 @@ export const answerField = async (
     firstName: userInfo.firstName,
     email: userInfo.email,
     fieldData: fieldData.inputs[0].outerHTML,
+    fieldLabel: fieldLabel,
   });
 
   return result.text as string;

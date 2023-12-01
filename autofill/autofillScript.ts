@@ -11,20 +11,24 @@ import { FieldInfo, UserInfo, FilePaths, inputElements } from './types';
 let dates: inputElements[] = [];
 
 async function simulateUserInput(
-  inputElement: HTMLInputElement | HTMLSelectElement,
+  inputElement: HTMLInputElement | HTMLSelectElement | HTMLButtonElement,
   value: string,
   i = 0,
 ) {
   // Set the value of the input field
-
-  inputElement.value = value;
+  if(value != 'null'){
+    inputElement.value = value;
+  }
 
   let eventType: string = '';
   if (inputElement instanceof HTMLSelectElement) {
     eventType = 'change';
   } else if (inputElement instanceof HTMLInputElement) {
     eventType = 'input';
+  } else if (inputElement instanceof HTMLButtonElement) {
+    eventType = 'click';
   }
+  
   // Create a new event for the 'input' event type
   const event = new Event(eventType, {
     // change the drop down value
@@ -199,13 +203,13 @@ async function normalFields(data: inputElements) {
     };*/
 
     // get ai response
-    let response = await answerField(user, data);
+    let response = await answerField(user, data, data.label.textContent || '');
     console.log(response);
     // set input value to response
     //console.log("result (normal): " + response);
     if (response.trim() != 'null') {
       // if field is not hidden, set the value
-      if (data.inputs[0].type != 'hidden') {
+      if (data.inputs[0].type != 'hidden' && response.trim() != 'null') {
         simulateUserInput(data.inputs[0], response.trim());
       }
     }
