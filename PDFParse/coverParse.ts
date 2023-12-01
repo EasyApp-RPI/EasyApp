@@ -41,6 +41,30 @@ const openDB = (): Promise<IDBDatabase> => {
   });
 };
 
+const savePdfDataToDB = async (id: string, data: Uint8Array): Promise<void> => {
+  try {
+    const db = await openDB();
+    const transaction = db.transaction('files', 'readwrite');
+    const objectStore = transaction.objectStore('files');
+
+    const request = objectStore.put({ id, data });
+
+    return new Promise<void>((resolve, reject) => {
+      request.onsuccess = () => {
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error('Error saving data to database');
+        reject('Error saving data to database');
+      };
+    });
+  } catch (error) {
+    console.error('Error opening database:', error.message);
+    throw error;
+  }
+};
+
 const parseCoverLetterFromPdf = async (pdfPath: string): Promise<void> => {
   try {
     const dataBuffer = fs.readFileSync(pdfPath);
@@ -63,7 +87,7 @@ const parseCoverLetterFromPdf = async (pdfPath: string): Promise<void> => {
     const outputJson: ParsedCoverLetter = { name, address, body };
 
     // Save the parsed data to IndexedDB
-    //await savePdfDataToDB('coverLetter', Buffer.from(JSON.stringify(outputJson)));
+    await savePdfDataToDB('coverLetter', Buffer.from(JSON.stringify(outputJson)));
 
     console.log('Cover letter data saved to IndexedDB.');
   } catch (error) {
