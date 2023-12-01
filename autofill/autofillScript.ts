@@ -16,7 +16,7 @@ async function simulateUserInput(
   i = 0,
 ) {
   // Set the value of the input field
-  if(value != 'null'){
+  if (value != 'null') {
     inputElement.value = value;
   }
 
@@ -28,7 +28,7 @@ async function simulateUserInput(
   } else if (inputElement instanceof HTMLButtonElement) {
     eventType = 'click';
   }
-  
+
   // Create a new event for the 'input' event type
   const event = new Event(eventType, {
     // change the drop down value
