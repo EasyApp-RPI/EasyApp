@@ -308,8 +308,8 @@ function EasyAppOptions() {
 
   const handleClear = () => {
     // Just go back to blank states then run call submission
-    chrome.storage.sync.clear()
-    
+    chrome.storage.sync.clear();
+
     setEducation([
       {
         key: 'Education',
@@ -356,7 +356,13 @@ function EasyAppOptions() {
     ]);
 
     setSkills([
-      { key: 'Skill', value: '', label: 'Skill', type: 'input', required: false },
+      {
+        key: 'Skill',
+        value: '',
+        label: 'Skill',
+        type: 'input',
+        required: false,
+      },
     ]);
 
     handleFormDataLoad();
