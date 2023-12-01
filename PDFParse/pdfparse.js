@@ -39,23 +39,95 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
 var pdf = require("pdf-parse");
-var readlineSync = require("readline-sync");
-function convertPdfToJson() {
+var openDB = function () {
+    // Return a Promise that wraps the logic for opening or upgrading the IndexedDB database
+    return new Promise(function (resolve, reject) {
+        // Use window.indexedDB to open the 'FilesDB' database with version 1
+        var request = window.indexedDB.open('FilesDB', 1);
+        // Handle errors that may occur during the attempt to open the database
+        request.onerror = function (event) {
+            reject('Error opening database');
+        };
+        // Handle successful opening of the database
+        request.onsuccess = function (event) {
+            // Extract the result from the event and cast it to an IDBDatabase instance
+            var target = event.target;
+            var db = target.result;
+            // Check if the database instance is valid and resolve the Promise with it
+            if (db) {
+                resolve(db);
+            }
+            else {
+                // Reject the Promise if the database instance is not valid
+                reject('Failed to open database');
+            }
+        };
+        // Handle the case where the database version needs an upgrade
+        request.onupgradeneeded = function (event) {
+            // Extract the result from the event and cast it to an IDBDatabase instance
+            var target = event.target;
+            var db = target.result;
+            // Create an object store named 'files' with 'id' as the key path
+            db.createObjectStore('files', { keyPath: 'id' });
+        };
+    });
+};
+function getPdfDataFromDB() {
     return __awaiter(this, void 0, void 0, function () {
-        var pdfPath, dataBuffer, data, textContent_1, emailRegex, phoneRegex, addressRegex, emails, phoneNumbers, addresses, keywords, jsonPath, parsedInfo, outputJsonPath, error_1;
+        var db, transaction, objectStore, request_1, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    pdfPath = readlineSync.question('Enter the path to the PDF file: ');
+                    return [4 /*yield*/, openDB()];
+                case 1:
+                    db = _a.sent();
+                    transaction = db.transaction('files', 'readonly');
+                    objectStore = transaction.objectStore('files');
+                    request_1 = objectStore.get('resume');
+                    return [2 /*return*/, new Promise(function (resolve, reject) {
+                            // When the file is found
+                            request_1.onsuccess = function () {
+                                var result = request_1.result;
+                                if (result && result.data instanceof Uint8Array) {
+                                    resolve(result.data);
+                                }
+                                else {
+                                    resolve(null);
+                                }
+                            };
+                            // When the file is not found
+                            request_1.onerror = function () {
+                                console.error('Error fetching data');
+                                resolve(null);
+                            };
+                        })];
+                case 2:
+                    error_1 = _a.sent();
+                    console.error('Error opening database:', error_1.message);
+                    return [2 /*return*/, null];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+function convertPdfToJson() {
+    return __awaiter(this, void 0, void 0, function () {
+        var pdfData, data, textContent_1, emailRegex, phoneRegex, addressRegex, emails, phoneNumbers, addresses, keywords, jsonPath, parsedInfo, outputJsonPath, error_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    return [4 /*yield*/, getPdfDataFromDB()];
+                case 1:
+                    pdfData = _a.sent();
                     // Check if the file exists
-                    if (!fs.existsSync(pdfPath)) {
-                        console.error('Error: The specified file does not exist.');
+                    if (!pdfData) {
+                        console.error('Error: The specified file does not exist in the database.');
                         return [2 /*return*/];
                     }
-                    dataBuffer = fs.readFileSync(pdfPath);
-                    return [4 /*yield*/, pdf(dataBuffer)];
-                case 1:
+                    return [4 /*yield*/, pdf(pdfData)];
+                case 2:
                     data = _a.sent();
                     textContent_1 = data.text;
                     emailRegex = /\b[\w\.-]+@[\w\.-]+\.\w+\b/g;
@@ -94,12 +166,12 @@ function convertPdfToJson() {
                     console.log('Parsed Information:');
                     console.log(parsedInfo);
                     console.log("Parsed information has been written to ".concat(outputJsonPath));
-                    return [3 /*break*/, 3];
-                case 2:
-                    error_1 = _a.sent();
-                    console.error('Error converting PDF to JSON:', error_1.message);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_2 = _a.sent();
+                    console.error('Error converting PDF to JSON:', error_2.message);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });

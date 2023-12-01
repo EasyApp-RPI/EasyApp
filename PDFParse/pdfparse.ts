@@ -1,28 +1,100 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as pdf from 'pdf-parse';
-import * as readlineSync from 'readline-sync';
+
+const openDB = (): Promise<IDBDatabase> => {
+  // Return a Promise that wraps the logic for opening or upgrading the IndexedDB database
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    // Use window.indexedDB to open the 'FilesDB' database with version 1
+    const request = window.indexedDB.open('FilesDB', 1);
+
+    // Handle errors that may occur during the attempt to open the database
+    request.onerror = (event: Event) => {
+      reject('Error opening database');
+    };
+
+    // Handle successful opening of the database
+    request.onsuccess = (event: Event) => {
+      // Extract the result from the event and cast it to an IDBDatabase instance
+      const target = event.target as IDBOpenDBRequest;
+      const db = target.result as IDBDatabase;
+
+      // Check if the database instance is valid and resolve the Promise with it
+      if (db) {
+        resolve(db);
+      } else {
+        // Reject the Promise if the database instance is not valid
+        reject('Failed to open database');
+      }
+    };
+
+    // Handle the case where the database version needs an upgrade
+    request.onupgradeneeded = (event: Event) => {
+      // Extract the result from the event and cast it to an IDBDatabase instance
+      const target = event.target as IDBOpenDBRequest;
+      const db = target.result as IDBDatabase;
+
+      // Create an object store named 'files' with 'id' as the key path
+      db.createObjectStore('files', { keyPath: 'id' });
+    };
+  });
+};
 
 interface ParsedInfo {
   category: string;
   content: string[];
 }
 
+async function getPdfDataFromDB(): Promise<Uint8Array | null> {
+  try {
+    // Opens the IndexedDB
+    const db = await openDB();
+
+    // Start a 'readonly' transaction on the 'files' object
+    const transaction = db.transaction('files', 'readonly');
+    
+    // Get the object store within the transaction
+    const objectStore = transaction.objectStore('files');
+
+    // Gets file based on id
+    const request = objectStore.get('resume');
+
+    return new Promise<Uint8Array | null>((resolve, reject) => {
+      // When the file is found
+      request.onsuccess = () => {
+        const result = request.result;
+        if (result && result.data instanceof Uint8Array) {
+          resolve(result.data);
+        } else {
+          resolve(null);
+        }
+      };
+      
+      // When the file is not found
+      request.onerror = () => {
+        console.error('Error fetching data');
+        resolve(null);
+      };
+    });
+  } catch (error) {
+    console.error('Error opening database:', error.message);
+    return null;
+  }
+}
+
 async function convertPdfToJson(): Promise<void> {
   try {
-    // CHANGE THIS LINE TO READ FROM THE DATABASE
-    const pdfPath = readlineSync.question('Enter the path to the PDF file: ');
+    // Fetch PDF data from IndexedDB
+    const pdfData = await getPdfDataFromDB();
 
     // Check if the file exists
-    if (!fs.existsSync(pdfPath)) {
-      console.error('Error: The specified file does not exist.');
+    if (!pdfData) {
+      console.error('Error: The specified file does not exist in the database.');
       return;
     }
 
-    // Read PDF file
-    const dataBuffer = fs.readFileSync(pdfPath);
     // Parse PDF
-    const data = await pdf(dataBuffer);
+    const data = await pdf(pdfData);
 
     // Extract text content
     let textContent = data.text;
