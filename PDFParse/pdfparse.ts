@@ -40,6 +40,30 @@ const openDB = (): Promise<IDBDatabase> => {
   });
 };
 
+const savePdfDataToDB = async (id: string, data: Uint8Array): Promise<void> => {
+  try {
+    const db = await openDB();
+    const transaction = db.transaction('files', 'readwrite');
+    const objectStore = transaction.objectStore('files');
+
+    const request = objectStore.put({ id, data });
+
+    return new Promise<void>((resolve, reject) => {
+      request.onsuccess = () => {
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error('Error saving data to database');
+        reject('Error saving data to database');
+      };
+    });
+  } catch (error) {
+    console.error('Error opening database:', error.message);
+    throw error;
+  }
+};
+
 interface ParsedInfo {
   category: string;
   content: string[];

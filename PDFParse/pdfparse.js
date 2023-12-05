@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+        while (_) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var fs = require("fs");
 var path = require("path");
 var pdf = require("pdf-parse");
@@ -72,9 +72,38 @@ var openDB = function () {
         };
     });
 };
+var savePdfDataToDB = function (id, data) { return __awaiter(void 0, void 0, void 0, function () {
+    var db, transaction, objectStore, request_1, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, openDB()];
+            case 1:
+                db = _a.sent();
+                transaction = db.transaction('files', 'readwrite');
+                objectStore = transaction.objectStore('files');
+                request_1 = objectStore.put({ id: id, data: data });
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        request_1.onsuccess = function () {
+                            resolve();
+                        };
+                        request_1.onerror = function () {
+                            console.error('Error saving data to database');
+                            reject('Error saving data to database');
+                        };
+                    })];
+            case 2:
+                error_1 = _a.sent();
+                console.error('Error opening database:', error_1.message);
+                throw error_1;
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 function getPdfDataFromDB() {
     return __awaiter(this, void 0, void 0, function () {
-        var db, transaction, objectStore, request_1, error_1;
+        var db, transaction, objectStore, request_2, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -84,11 +113,11 @@ function getPdfDataFromDB() {
                     db = _a.sent();
                     transaction = db.transaction('files', 'readonly');
                     objectStore = transaction.objectStore('files');
-                    request_1 = objectStore.get('resume');
+                    request_2 = objectStore.get('resume');
                     return [2 /*return*/, new Promise(function (resolve, reject) {
                             // When the file is found
-                            request_1.onsuccess = function () {
-                                var result = request_1.result;
+                            request_2.onsuccess = function () {
+                                var result = request_2.result;
                                 if (result && result.data instanceof Uint8Array) {
                                     resolve(result.data);
                                 }
@@ -97,14 +126,14 @@ function getPdfDataFromDB() {
                                 }
                             };
                             // When the file is not found
-                            request_1.onerror = function () {
+                            request_2.onerror = function () {
                                 console.error('Error fetching data');
                                 resolve(null);
                             };
                         })];
                 case 2:
-                    error_1 = _a.sent();
-                    console.error('Error opening database:', error_1.message);
+                    error_2 = _a.sent();
+                    console.error('Error opening database:', error_2.message);
                     return [2 /*return*/, null];
                 case 3: return [2 /*return*/];
             }
@@ -113,7 +142,7 @@ function getPdfDataFromDB() {
 }
 function convertPdfToJson() {
     return __awaiter(this, void 0, void 0, function () {
-        var pdfData, data, textContent_1, emailRegex, phoneRegex, addressRegex, emails, phoneNumbers, addresses, keywords, jsonPath, parsedInfo, outputJsonPath, error_2;
+        var pdfData, data, textContent_1, emailRegex, phoneRegex, addressRegex, emails, phoneNumbers, addresses, keywords, jsonPath, parsedInfo, outputJsonPath, error_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -168,8 +197,8 @@ function convertPdfToJson() {
                     console.log("Parsed information has been written to ".concat(outputJsonPath));
                     return [3 /*break*/, 4];
                 case 3:
-                    error_2 = _a.sent();
-                    console.error('Error converting PDF to JSON:', error_2.message);
+                    error_3 = _a.sent();
+                    console.error('Error converting PDF to JSON:', error_3.message);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
