@@ -140,7 +140,6 @@ const removeFile = (fileKey: string) => {
 };
 
 function EasyAppOptions() {
-
   const [SubmitText, SetSubmitText] = useState('Submit');
   const [SubmitVariant, SetSubmitVariant] = useState('primary');
 
@@ -439,7 +438,7 @@ function EasyAppOptions() {
     let dataToSave = {};
 
     // Supplement Text
-    let supp = "";
+    let supp = '';
 
     // Iterate over Personal Info and trim values
     PersonalInfo.forEach((data) => {
