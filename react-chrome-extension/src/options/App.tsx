@@ -141,6 +141,9 @@ const removeFile = (fileKey: string) => {
 
 function EasyAppOptions() {
 
+  const [SubmitText, SetSubmitText] = useState('Submit');
+  const [SubmitVariant, SetSubmitVariant] = useState('primary');
+
   // Personal Information Form Data
   const [PersonalInfo, setPersonalInfo] = useState([
     {
@@ -484,6 +487,13 @@ function EasyAppOptions() {
       // Trigger a function to handle loading form data (assuming it is defined)
       handleFormDataLoad();
     });
+
+    SetSubmitText('Information Saved!');
+    SetSubmitVariant('success');
+    setTimeout(() => {
+      SetSubmitText('Submit');
+      SetSubmitVariant('primary');
+    }, 3000);
   };
 
   const temp = 'Test';
@@ -550,8 +560,8 @@ function EasyAppOptions() {
           <Container>
             <Row>
               <Col>
-                <Button variant='primary' onClick={handleSubmit}>
-                  Submit
+                <Button variant={SubmitVariant} onClick={handleSubmit}>
+                  {SubmitText}
                 </Button>{' '}
               </Col>
               <Col>

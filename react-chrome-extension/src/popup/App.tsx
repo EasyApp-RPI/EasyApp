@@ -36,13 +36,18 @@ function EasyAppPopup() {
 
   // Stored Form Fields (update with options page)
   const fields = [
-    'name',
-    'major',
-    'interests',
-    'skills',
-    'experience',
-    'links',
-    'supplement',
+    'OpenAI Key',
+    'firstName',
+    'middleName',
+    'lastName',
+    'email',
+    'mobileNumber',
+    'phoneNumber',
+    'address',
+    'country',
+    'state',
+    'city',
+    'zipCode',
   ];
 
   // Checks if any settings from the settings page have been filled out
