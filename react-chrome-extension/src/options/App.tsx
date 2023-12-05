@@ -140,6 +140,7 @@ const removeFile = (fileKey: string) => {
 };
 
 function EasyAppOptions() {
+
   // Personal Information Form Data
   const [PersonalInfo, setPersonalInfo] = useState([
     {
@@ -150,59 +151,59 @@ function EasyAppOptions() {
       required: true,
     },
     {
-      key: 'First name',
+      key: 'firstName',
       value: '',
       label: 'First Name',
       type: 'input',
       required: true,
     },
     {
-      key: 'Middle name',
+      key: 'middleName',
       value: '',
       label: 'Middle Name',
       type: 'input',
       required: false,
     },
     {
-      key: 'Last name',
+      key: 'lastName',
       value: '',
       label: 'Last Name',
       type: 'input',
       required: true,
     },
-    { key: 'Email', value: '', label: 'Email', type: 'input', required: true },
+    { key: 'email', value: '', label: 'Email', type: 'input', required: true },
     {
-      key: 'Mobile Number',
+      key: 'mobileNumber',
       value: '',
       label: 'Mobile Number',
       type: 'input',
       required: false,
     },
     {
-      key: 'Phone Number',
+      key: 'phoneNumber',
       value: '',
       label: 'Phone Number',
       type: 'input',
       required: false,
     },
     {
-      key: 'Address',
+      key: 'address',
       value: '',
       label: 'Address',
       type: 'input',
       required: false,
     },
     {
-      key: 'Country',
+      key: 'country',
       value: '',
       label: 'Country',
       type: 'input',
       required: false,
     },
-    { key: 'State', value: '', label: 'State', type: 'input', required: false },
-    { key: 'City', value: '', label: 'City', type: 'input', required: false },
+    { key: 'state', value: '', label: 'State', type: 'input', required: false },
+    { key: 'city', value: '', label: 'City', type: 'input', required: false },
     {
-      key: 'Zip Code',
+      key: 'zipCode',
       value: '',
       label: 'Zip Code',
       type: 'input',
@@ -434,20 +435,26 @@ function EasyAppOptions() {
     // Initialize an object to store form data
     let dataToSave = {};
 
+    // Supplement Text
+    let supp = "";
+
     // Iterate over Personal Info and trim values
     PersonalInfo.forEach((data) => {
       dataToSave[data.key] = data.value.trim();
+      supp += `${data.key}: ${data.value.trim()}\n`;
     });
 
     let WorkExpArray = [];
     WorkExp.forEach((data) => {
       WorkExpArray.push(data);
+      supp += `Work Experience = { ${data.Company.value}, Title: ${data.Title.value}, Description: ${data.Description.value}}\n`;
     });
     dataToSave['WorkExp'] = WorkExpArray;
 
     let EducationArray = [];
     Education.forEach((data) => {
       EducationArray.push(data);
+      supp += `Education = { School: ${data.School.value}, Degree: ${data.Degree.value}, Major: ${data.Major.value}, Start: ${data.Start.value}, End: ${data.End.value}}\n`;
     });
     dataToSave['Education'] = EducationArray;
 
@@ -455,6 +462,7 @@ function EasyAppOptions() {
     let InterestsArray = [];
     Interests.forEach((data) => {
       InterestsArray.push(data);
+      supp += `Interests: ${data.value}\n`;
     });
     dataToSave['Interests'] = InterestsArray;
 
@@ -462,8 +470,11 @@ function EasyAppOptions() {
     let SkillsArray = [];
     Skills.forEach((data) => {
       SkillsArray.push(data);
+      supp += `Skills: ${data.value}\n`;
     });
     dataToSave['Skills'] = SkillsArray;
+
+    dataToSave['supplement'] = supp;
 
     // Save the form data to chrome.storage.sync
     chrome.storage.sync.set(dataToSave, function () {
